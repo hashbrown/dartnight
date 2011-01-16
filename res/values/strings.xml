@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="home_text">Tuesday night is Dart Night</string>
+    <string name="app_name">Dart Night</string>
+    <!-- MAIN SCREEN -->
+    <string name="menu_new_game">New Game</string>
+    <string name="manage_players">Manage Players</string>
+    <string name="view_leaderboard">View Leaderboard</string>
+    <string name="select_teams_dialog_header">Choose Number of Teams</string>
+    <!-- MANAGE PLAYERS SCREEN -->
+    <string name="select_players">Select Players</string>
+    <!-- PLAYER MENU -->
+    <string name="menu_add_player">Add Player</string>
+    <string name="menu_edit_player">Edit Player</string>
+    <string name="menu_delete_player">Delete Player</string>
+    <string name="save_player">Save Player</string>
+    <string name="label_player_first_name">Enter First Name</string>
+    <string name="label_player_last_name">Enter Last Name</string>
+    <string name="label_player_nick_name">Enter Nick Name</string>
+    <string name="player_first_name">First Name</string>
+    <string name="player_last_name">Last Name</string>
+    <string name="player_nick_name">Nick Name</string>
+    <!-- GAME SCREEN -->
+    <string name="label_team_1">TEAM 1</string>
+    <string name="label_team_2">TEAM 2</string>
+    <string name="label_team_3">TEAM 3</string>
+    <string name="label_team_4">TEAM 4</string>
+    <string name="generate_teams">Pick My Teams</string>
+    <string name="select_winner">Select Winner</string>
+    <string name="enter_mpr">Enter Marks Per Round</string>
+</resources>
