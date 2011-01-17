@@ -7,8 +7,11 @@
     <string name="manage_players">Manage Players</string>
     <string name="view_leaderboard">View Leaderboard</string>
     <string name="select_teams_dialog_header">Choose Number of Teams</string>
-    <!-- MANAGE PLAYERS SCREEN -->
+    <!-- LIST GAMES SCREEN -->
+    <string name="create_new_game">Start A New Game</string>
+    <!-- LIST PLAYERS SCREEN -->
     <string name="select_players">Select Players</string>
+    <string name="create_new_player">Create A New Player</string>
     <!-- PLAYER MENU -->
     <string name="menu_add_player">Add Player</string>
     <string name="menu_edit_player">Edit Player</string>

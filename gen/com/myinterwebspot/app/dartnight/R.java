@@ -62,36 +62,40 @@ public final class R {
     }
     public static final class string {
         public static final int app_name=0x7f050001;
-        public static final int enter_mpr=0x7f050017;
-        public static final int generate_teams=0x7f050015;
+        /**  LIST GAMES SCREEN 
+         */
+        public static final int create_new_game=0x7f050006;
+        public static final int create_new_player=0x7f050008;
+        public static final int enter_mpr=0x7f050019;
+        public static final int generate_teams=0x7f050017;
         public static final int home_text=0x7f050000;
-        public static final int label_player_first_name=0x7f05000b;
-        public static final int label_player_last_name=0x7f05000c;
-        public static final int label_player_nick_name=0x7f05000d;
+        public static final int label_player_first_name=0x7f05000d;
+        public static final int label_player_last_name=0x7f05000e;
+        public static final int label_player_nick_name=0x7f05000f;
         /**  GAME SCREEN 
          */
-        public static final int label_team_1=0x7f050011;
-        public static final int label_team_2=0x7f050012;
-        public static final int label_team_3=0x7f050013;
-        public static final int label_team_4=0x7f050014;
+        public static final int label_team_1=0x7f050013;
+        public static final int label_team_2=0x7f050014;
+        public static final int label_team_3=0x7f050015;
+        public static final int label_team_4=0x7f050016;
         public static final int manage_players=0x7f050003;
         /**  PLAYER MENU 
          */
-        public static final int menu_add_player=0x7f050007;
-        public static final int menu_delete_player=0x7f050009;
-        public static final int menu_edit_player=0x7f050008;
+        public static final int menu_add_player=0x7f050009;
+        public static final int menu_delete_player=0x7f05000b;
+        public static final int menu_edit_player=0x7f05000a;
         /**  MAIN SCREEN 
          */
         public static final int menu_new_game=0x7f050002;
-        public static final int player_first_name=0x7f05000e;
-        public static final int player_last_name=0x7f05000f;
-        public static final int player_nick_name=0x7f050010;
-        public static final int save_player=0x7f05000a;
-        /**  MANAGE PLAYERS SCREEN 
+        public static final int player_first_name=0x7f050010;
+        public static final int player_last_name=0x7f050011;
+        public static final int player_nick_name=0x7f050012;
+        public static final int save_player=0x7f05000c;
+        /**  LIST PLAYERS SCREEN 
          */
-        public static final int select_players=0x7f050006;
+        public static final int select_players=0x7f050007;
         public static final int select_teams_dialog_header=0x7f050005;
-        public static final int select_winner=0x7f050016;
+        public static final int select_winner=0x7f050018;
         public static final int view_leaderboard=0x7f050004;
     }
 }
