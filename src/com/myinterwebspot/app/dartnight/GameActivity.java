@@ -244,6 +244,7 @@ public class GameActivity extends Activity{
 
 	private void initViews(Game game) {
 
+		final Game gameRef = game;
 		GridView gridview = (GridView) findViewById(R.id.GameView);
 		gridview.setAdapter(this.gameAdapter);
 		
@@ -251,7 +252,9 @@ public class GameActivity extends Activity{
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
 					long rowId) {
-				showDialog(position);	
+				if(gameRef.getState() == GameState.COMPLETE){
+					showDialog(position);	
+				}
 			}
 		});
 		
