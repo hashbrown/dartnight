@@ -40,6 +40,7 @@ public class GameActivity extends Activity{
 	private DBHelper db;
 	private Game game;
 	private Button actionBtn;
+	private ViewHolder viewholder;
 	private BaseAdapter gameAdapter;
 	private Resources rsc;
 
@@ -82,8 +83,6 @@ public class GameActivity extends Activity{
 	}
 
 
-
-
 	@Override
 	protected void onResume() {
 		// TODO Auto-generated method stub
@@ -98,6 +97,7 @@ public class GameActivity extends Activity{
 			generateTeams(selectedPlayerIds);
 			this.db.saveGame(game);
 			this.gameAdapter.notifyDataSetChanged();
+			refreshView();
 		}
 	}
 
@@ -127,7 +127,7 @@ public class GameActivity extends Activity{
 
 	@Override
 	protected Dialog onCreateDialog(int id) {
-		
+
 		if(id == 4){
 			return createSelectWinnerDialog();
 		} else {
@@ -155,7 +155,7 @@ public class GameActivity extends Activity{
 
 
 	protected Dialog createMPRDialog(int position) {
-		
+
 		final EditText mprTextView = new EditText(getApplicationContext());
 		final Team selectedTeam = this.game.getTeams().get(position);
 
@@ -163,11 +163,11 @@ public class GameActivity extends Activity{
 		.setTitle(R.string.enter_mpr)
 		.setView(mprTextView)
 		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-	           public void onClick(DialogInterface dialog, int id) {
-	                String mpr = mprTextView.getText().toString();
-	                updateTeamMPR(selectedTeam, mpr);
-	           }
-	       })
+			public void onClick(DialogInterface dialog, int id) {
+				String mpr = mprTextView.getText().toString();
+				updateTeamMPR(selectedTeam, mpr);
+			}
+		})
 		.create();		
 	}
 
@@ -177,7 +177,7 @@ public class GameActivity extends Activity{
 		stats.setMpr(Double.valueOf(mpr));
 		this.gameAdapter.notifyDataSetChanged();
 		this.db.saveTeamStats(stats);
-		
+
 	}
 
 
@@ -187,14 +187,14 @@ public class GameActivity extends Activity{
 		for (int i = 0; i < this.game.getTeams().size(); i++){					
 			Team team = this.game.getTeams().get(i);
 			TeamStat teamStat = new TeamStat(team, this.game);
-			
+
 			if(i==winner){
 				teamStat.setWinner(true);
 			}
-			
+
 			team.addGameStat(teamStat);
 			this.db.saveTeamStats(teamStat);
-			
+
 			Set<Player> winningPlayers = team.getPlayers();
 			for (Player player : winningPlayers) {
 				PlayerStat playerStat = new PlayerStat(player);
@@ -210,8 +210,7 @@ public class GameActivity extends Activity{
 	protected void finishGame(){
 		this.game.setState(GameState.COMPLETE);
 		this.db.saveGame(this.game);
-		actionBtn.setVisibility(View.GONE);
-
+		refreshView();
 	}
 
 	private void generateTeams(List<String> selectedPlayerIds) {
@@ -227,26 +226,27 @@ public class GameActivity extends Activity{
 			Player player = this.db.getPlayer(playerId);	
 			Team team = teams.get(teamIdx); 
 			team.addPlayer(player);
-			
-			
+
+
 			String teamName = new String();
 			if(team.getName() != null){
 				teamName = team.getName() + "-";
 			} 
-			
+
 			teamName += player.getNickName();
-			
+
 			team.setName(teamName);
-			
+
 			teamIdx++;
 		}
 	}
-	
+
 
 	private void initViews(Game game) {
 
 		GridView gridview = (GridView) findViewById(R.id.GameView);
 		gridview.setAdapter(this.gameAdapter);
+		
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
@@ -254,38 +254,60 @@ public class GameActivity extends Activity{
 				showDialog(position);	
 			}
 		});
-
-		actionBtn = (Button) findViewById(R.id.action_button);
-
-		if (game.getState() == GameState.NEW){
-			actionBtn.setText("Start Game");
-			actionBtn.setOnClickListener(new OnClickListener() {
+		
+		Button actionBtn = (Button) findViewById(R.id.action_button);
+		
+		this.viewholder = new ViewHolder();
+		this.viewholder.setActionBtn(actionBtn);
+		this.viewholder.setGridview(gridview);
+		
+		refreshView();
+		
+	}
+	
+	protected void refreshView(){
+		
+		Button button = this.viewholder.getActionBtn();
+		button.setVisibility(View.VISIBLE);
+		
+		if (readyToStart(game)){
+			button.setText("Start Game");
+			button.setOnClickListener(new OnClickListener() {
 
 				public void onClick(View v) {
 					((Button)v).setText("Finish Game");
 					GameActivity.this.game.setState(GameState.IN_PROGRESS);
 					GameActivity.this.db.saveGame(GameActivity.this.game);
-					
-					actionBtn.setOnClickListener(new OnClickListener() {
-
-						public void onClick(View v) {
-							showDialog(4);
-						}
-					});
+					refreshView();
 				}
 			});
 		} else if(game.getState() == GameState.IN_PROGRESS){
-			actionBtn.setText("Finish Game");
-			actionBtn.setOnClickListener(new OnClickListener() {
+			button.setText("Finish Game");
+			button.setOnClickListener(new OnClickListener() {
 
 				public void onClick(View v) {
 					showDialog(4);
 				}
 			});
 		} else {
-			actionBtn.setVisibility(View.GONE);
+			button.setVisibility(View.GONE);
+		}
+		
+	}
+
+
+	protected boolean readyToStart(Game game) {
+		if(game.getState() != GameState.NEW){
+			return false;
+		}
+		
+		for (Team team : game.getTeams()) {
+			if(team.getPlayers().size() == 0){
+				return false;
+			}
 		}
 
+		return true;
 	}
 
 
@@ -294,12 +316,30 @@ public class GameActivity extends Activity{
 		super.onDestroy();
 		this.db.close();
 	}
-
-	private void saveAndExit(){
-		this.db.saveGame(this.game);
-		startActivity(new Intent(this, HomeActivity.class));
+	
+	class ViewHolder {
+		
+		private GridView gridview;
+		private Button actionBtn;
+		
+		
+		public GridView getGridview() {
+			return gridview;
+		}
+		
+		public void setGridview(GridView gridview) {
+			this.gridview = gridview;
+		}
+		
+		public Button getActionBtn() {
+			return actionBtn;
+		}
+		
+		public void setActionBtn(Button actionBtn) {
+			this.actionBtn = actionBtn;
+		}
+		
+		
+		
 	}
-
-
-
 }
