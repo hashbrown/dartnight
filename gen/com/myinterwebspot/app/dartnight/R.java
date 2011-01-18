@@ -45,6 +45,7 @@ public final class R {
         public static final int LabelFirstName=0x7f060000;
         public static final int LabelShortName=0x7f060003;
         public static final int TeamScore=0x7f060010;
+        public static final int Winner=0x7f060011;
         public static final int action_button=0x7f060007;
         public static final int background=0x7f06000a;
         public static final int player_name=0x7f060008;
@@ -97,5 +98,6 @@ public final class R {
         public static final int select_teams_dialog_header=0x7f050005;
         public static final int select_winner=0x7f050018;
         public static final int view_leaderboard=0x7f050004;
+        public static final int winner=0x7f05001a;
     }
 }

@@ -2,8 +2,7 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
     android:layout_height="fill_parent"
-    android:padding="5dip"
-    android:background="@drawable/red">
+    android:padding="5dip">
 
     <ImageView android:id="@+id/background"
     		   android:layout_width="fill_parent"
@@ -18,6 +17,7 @@
     		  android:layout_width="fill_parent" 
     		  android:layout_height="wrap_content"
     		  android:textSize="24dip"
+    		  android:gravity="center"
     		  android:layout_alignParentTop="true"
     		  android:layout_centerHorizontal="true">
     </TextView>
@@ -46,9 +46,19 @@
     		  android:layout_below="@id/GamePlayer3">
     </TextView>
     <TextView android:id="@+id/TeamScore" 
-    		  android:layout_width="wrap_content"
+    		  android:layout_width="fill_parent"
     		  android:layout_height="wrap_content"
     		  android:textSize="24dip" 
+    		  android:numeric="decimal"
+    		  android:gravity="center"
     		  android:layout_below="@id/GamePlayer4">
+    </TextView>
+    <TextView android:id="@+id/Winner" 
+    		  android:text="@string/winner"
+    		  android:layout_width="fill_parent"
+    		  android:layout_height="wrap_content"
+    		  android:textSize="24dip" 
+    		  android:gravity="center"
+    		  android:layout_below="@id/TeamScore">
     </TextView>
 </RelativeLayout>

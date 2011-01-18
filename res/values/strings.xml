@@ -31,4 +31,5 @@
     <string name="generate_teams">Pick My Teams</string>
     <string name="select_winner">Select Winner</string>
     <string name="enter_mpr">Enter Marks Per Round</string>
+    <string name="winner">WINNER!</string>
 </resources>
