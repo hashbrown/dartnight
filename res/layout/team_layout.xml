@@ -4,14 +4,6 @@
     android:layout_height="fill_parent"
     android:padding="5dip">
 
-    <ImageView android:id="@+id/background"
-    		   android:layout_width="fill_parent"
-    		   android:layout_height="fill_parent"
-               android:adjustViewBounds="true"
-               android:scaleType="fitStart"
-               android:layout_centerInParent="true"
-               android:src="@drawable/dartboard_blank_sm">
-    </ImageView>
     <TextView android:id="@+id/GameTeam" 
     		  android:orientation="vertical"
     		  android:layout_width="fill_parent" 
@@ -21,6 +13,15 @@
     		  android:layout_alignParentTop="true"
     		  android:layout_centerHorizontal="true">
     </TextView>
+    <ImageView android:id="@+id/background"
+    		   android:layout_width="fill_parent"
+    		   android:layout_height="fill_parent"
+               android:adjustViewBounds="true"
+               android:scaleType="fitStart"
+               android:layout_centerHorizontal="true"
+               android:layout_below="@id/GameTeam"
+               android:src="@drawable/dartboard_blank_sm">
+    </ImageView>
     <TextView android:id="@+id/GamePlayer1" 
     		  android:layout_width="wrap_content" 
     		  android:layout_height="wrap_content"
@@ -49,7 +50,6 @@
     		  android:layout_width="fill_parent"
     		  android:layout_height="wrap_content"
     		  android:textSize="24dip" 
-    		  android:numeric="decimal"
     		  android:gravity="center"
     		  android:layout_below="@id/GamePlayer4">
     </TextView>
