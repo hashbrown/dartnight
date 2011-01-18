@@ -55,7 +55,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	}
 	
 	public Cursor getGames(){
-		return getReadableDatabase().query(GameTable.TABLE_NAME, null, null, null, null, null, null);
+		return getReadableDatabase().query(GameTable.TABLE_NAME, null, null, null, null, null, GameTable.DEFAULT_SORT_ORDER);
 	}
 	
 	public Game getGame(String gameId) {
