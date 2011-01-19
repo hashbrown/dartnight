@@ -368,6 +368,16 @@ public class DBHelper extends SQLiteOpenHelper {
 		values.put(TeamStatsTable.WINNER, teamStats.isWinner());
 		values.put(TeamStatsTable.MPR, teamStats.getMpr());
 		
+		String whereClause = TeamStatsTable.TEAM_ID + "= ? AND " + TeamStatsTable.GAME_ID + "= ?";
+		String[] whereArgs = new String[]{teamStats.getTeamId(),teamStats.getGameId()};
+		
+		Cursor curs = getReadableDatabase().query(TeamStatsTable.TABLE_NAME, null, whereClause, whereArgs, null, null, null);
+		if(curs.isAfterLast()){
+			insertTeamStats(values);
+		} else {
+			updateTeamStats(teamStats.getTeamId(),teamStats.getGameId(), values);
+		}
+		
 		getWritableDatabase().replace(TeamStatsTable.TABLE_NAME, null, values);
 	}
 	
@@ -401,4 +411,23 @@ public class DBHelper extends SQLiteOpenHelper {
 		getWritableDatabase().replace(PlayerStatsTable.TABLE_NAME, null, values);
 		
 	}
+	
+	private long insertTeamStats(ContentValues values) {
+		
+		long rowId = getWritableDatabase().insert(TeamStatsTable.TABLE_NAME, null, values);
+		if( rowId < 0){
+			throw new SQLException("Failed to insert new TeamStat");
+		}
+
+		return rowId;
+	}
+	
+	private void updateTeamStats(String teamId, String gameId, ContentValues values) {
+		String whereClause = TeamStatsTable.TEAM_ID + "= ? AND " + TeamStatsTable.GAME_ID + "= ?";
+		String[] whereArgs = new String[]{teamId,gameId};
+		getWritableDatabase().update(TeamStatsTable.TABLE_NAME, values, whereClause, whereArgs);
+		
+	}
+
+	
 }

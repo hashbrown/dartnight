@@ -123,14 +123,13 @@ public class GameViewAdapter extends BaseAdapter {
 			playerView.setText(player.getNickName());
 		}
         
+        holder.winner.setVisibility(View.GONE);
+
         TeamStat stat = team.getGameStats(game);
         if(stat != null){
-        	holder.score.setText(String.valueOf(stat.getMpr())); 
-        	
+        	holder.score.setText(String.valueOf(stat.getMpr()));         	
         	if(stat.isWinner()){
         		holder.winner.setVisibility(View.VISIBLE);
-        	} else {
-        		holder.winner.setVisibility(View.GONE);
         	}
         }
         

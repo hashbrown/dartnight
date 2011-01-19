@@ -210,6 +210,7 @@ public class GameActivity extends Activity{
 	protected void finishGame(){
 		this.game.setState(GameState.COMPLETE);
 		this.db.saveGame(this.game);
+		this.gameAdapter.notifyDataSetChanged();
 		refreshView();
 	}
 
