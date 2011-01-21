@@ -15,9 +15,11 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.os.Bundle;
+import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.View.OnClickListener;
 import android.widget.AdapterView;
 import android.widget.BaseAdapter;
@@ -157,9 +159,10 @@ public class GameActivity extends Activity{
 	protected Dialog createMPRDialog(int position) {
 
 		final EditText mprTextView = new EditText(getApplicationContext());
+		mprTextView.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
 		final Team selectedTeam = this.game.getTeams().get(position);
 
-		return new AlertDialog.Builder(GameActivity.this)
+		final Dialog dialog =  new AlertDialog.Builder(GameActivity.this)
 		.setTitle(R.string.enter_mpr)
 		.setView(mprTextView)
 		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
@@ -168,15 +171,21 @@ public class GameActivity extends Activity{
 				updateTeamMPR(selectedTeam, mpr);
 			}
 		})
-		.create();		
+		.create();
+		
+		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);					
+		
+		return dialog;
 	}
 
 	protected void updateTeamMPR(Team selectedTeam, String mpr) {
-		//TeamStat stats = this.db.getTeamstatsForGame(selectedTeam.getId(), this.game.getId());
-		TeamStat stats = selectedTeam.getGameStats(this.game);
-		stats.setMpr(Double.valueOf(mpr));
-		this.gameAdapter.notifyDataSetChanged();
-		this.db.saveTeamStats(stats);
+
+		if(mpr != null && mpr.length() >0){
+			TeamStat stats = selectedTeam.getGameStats(this.game);
+			stats.setMpr(Double.valueOf(mpr));
+			this.gameAdapter.notifyDataSetChanged();
+			this.db.saveTeamStats(stats);
+		}
 
 	}
 
@@ -248,7 +257,7 @@ public class GameActivity extends Activity{
 		final Game gameRef = game;
 		GridView gridview = (GridView) findViewById(R.id.GameView);
 		gridview.setAdapter(this.gameAdapter);
-		
+
 		gridview.setOnItemClickListener(new OnItemClickListener() {
 
 			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
@@ -258,22 +267,22 @@ public class GameActivity extends Activity{
 				}
 			}
 		});
-		
+
 		Button actionBtn = (Button) findViewById(R.id.action_button);
-		
+
 		this.viewholder = new ViewHolder();
 		this.viewholder.setActionBtn(actionBtn);
 		this.viewholder.setGridview(gridview);
-		
+
 		refreshView();
-		
+
 	}
-	
+
 	protected void refreshView(){
-		
+
 		Button button = this.viewholder.getActionBtn();
 		button.setVisibility(View.VISIBLE);
-		
+
 		if (readyToStart(game)){
 			button.setText("Start Game");
 			button.setOnClickListener(new OnClickListener() {
@@ -296,7 +305,7 @@ public class GameActivity extends Activity{
 		} else {
 			button.setVisibility(View.GONE);
 		}
-		
+
 	}
 
 
@@ -304,7 +313,7 @@ public class GameActivity extends Activity{
 		if(game.getState() != GameState.NEW){
 			return false;
 		}
-		
+
 		for (Team team : game.getTeams()) {
 			if(team.getPlayers().size() == 0){
 				return false;
@@ -320,30 +329,30 @@ public class GameActivity extends Activity{
 		super.onDestroy();
 		this.db.close();
 	}
-	
+
 	class ViewHolder {
-		
+
 		private GridView gridview;
 		private Button actionBtn;
-		
-		
+
+
 		public GridView getGridview() {
 			return gridview;
 		}
-		
+
 		public void setGridview(GridView gridview) {
 			this.gridview = gridview;
 		}
-		
+
 		public Button getActionBtn() {
 			return actionBtn;
 		}
-		
+
 		public void setActionBtn(Button actionBtn) {
 			this.actionBtn = actionBtn;
 		}
-		
-		
-		
+
+
+
 	}
 }
