@@ -27,6 +27,8 @@ import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.ListAdapter;
+import android.widget.RadioButton;
+import android.widget.TextView;
 import android.widget.AdapterView.OnItemClickListener;
 
 import com.myinterwebspot.app.dartnight.db.DBHelper;
@@ -130,68 +132,88 @@ public class GameActivity extends Activity{
 	@Override
 	protected Dialog onCreateDialog(int id) {
 
-		if(id == 4){
-			return createSelectWinnerDialog();
-		} else {
-			return createMPRDialog(id);
-		}		
+		return buildGameResultsDialog();
 	}
 
+	protected Dialog buildGameResultsDialog(){
 
-	protected Dialog createSelectWinnerDialog() {
-		String[] choices = new String[this.game.getTeams().size()];
-		for (int i = 0; i < this.game.getTeams().size(); i++) {
-			choices[i] = this.game.getTeams().get(i).getName();
+		int[] radioBtns = {R.id.winner_team1,R.id.winner_team2,R.id.winner_team3,R.id.winner_team4};
+		int[] nameViews = {R.id.label_team1,R.id.label_team2,R.id.label_team3,R.id.label_team4};
+		int[] scoreViews = {R.id.score_team1,R.id.score_team2,R.id.score_team3,R.id.score_team4};		
+
+		final Dialog dialog = new Dialog(this);
+
+		dialog.setContentView(R.layout.game_results_layout);
+		dialog.setTitle("Select Winner and Enter Scores");
+		//dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
+		
+		final RadioButton[] btnGroup = new RadioButton[4];
+		for (int i = 0; i < radioBtns.length; i++) {
+			RadioButton btn = (RadioButton) dialog.findViewById(radioBtns[i]);
+			btnGroup[i] = btn;
+		}
+		
+		final EditText[] scoreGroup = new EditText[4];
+		for (int i = 0; i < scoreViews.length; i++) {
+			EditText score = (EditText) dialog.findViewById(scoreViews[i]);
+			scoreGroup[i] = score;
 		}
 
-		return new AlertDialog.Builder(GameActivity.this)
-		.setTitle(R.string.select_winner)
-		.setItems(choices, new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int selectedOption) {
-				createGameStats(selectedOption);
-				finishGame();
+		// hide teams not in play
+		final int nbrTeams = game.getTeams().size();
+		for (int i = 0; i < btnGroup.length; i++) {
+			RadioButton btn = btnGroup[i];
+			if(i < nbrTeams){
+				btn.setOnClickListener(new
+						RadioButton.OnClickListener()
+				{
+
+					public void onClick(View v) {
+						RadioButton clickedBtn = (RadioButton)v;
+						for (int j = 0; j < btnGroup.length; j++) {
+							if(clickedBtn.getId() == btnGroup[j].getId()){
+								btnGroup[j].setChecked(true);
+							} else {
+								btnGroup[j].setChecked(false);
+							}
+						}						
+					}
+				}
+				);
+			} else {
+				btn.setVisibility(View.GONE);
+				EditText score = (EditText) dialog.findViewById(scoreViews[i]);
+				score.setVisibility(View.GONE);	
+				TextView teamName = (TextView) dialog.findViewById(nameViews[i]);
+				teamName.setVisibility(View.GONE);			
 			}
-		})
-		.create();	
-	}
-
-
-	protected Dialog createMPRDialog(int position) {
-
-		final EditText mprTextView = new EditText(getApplicationContext());
-		mprTextView.setInputType(InputType.TYPE_CLASS_NUMBER|InputType.TYPE_NUMBER_FLAG_DECIMAL);
-		final Team selectedTeam = this.game.getTeams().get(position);
-
-		final Dialog dialog =  new AlertDialog.Builder(GameActivity.this)
-		.setTitle(R.string.enter_mpr)
-		.setView(mprTextView)
-		.setPositiveButton("OK", new DialogInterface.OnClickListener() {
-			public void onClick(DialogInterface dialog, int id) {
-				String mpr = mprTextView.getText().toString();
-				updateTeamMPR(selectedTeam, mpr);
+		}
+		
+		Button saveBtn = (Button)dialog.findViewById(R.id.save_button);
+		saveBtn.setOnClickListener(new OnClickListener() {
+			
+			public void onClick(View v) {
+				String[] scores = new String[nbrTeams];
+				int winner=-1;
+				
+				for (int i = 0; i < nbrTeams; i++) {
+					if(btnGroup[i].isChecked()){
+						winner = i;
+					}
+					scores[i] = scoreGroup[i].getText().toString();
+				}
+				dialog.dismiss();
+				saveGameResults(winner,scores);				
 			}
-		})
-		.create();
-		
-		dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);					
-		
+		});
+
 		return dialog;
 	}
 
-	protected void updateTeamMPR(Team selectedTeam, String mpr) {
-
-		if(mpr != null && mpr.length() >0){
-			TeamGameStat stats = selectedTeam.getGameStats(this.game);
-			stats.setScore(Double.valueOf(mpr));
-			this.gameAdapter.notifyDataSetChanged();
-			this.db.saveTeamGameStats(stats);
-		}
-
-	}
 
 
-
-	protected void createGameStats(int winner) {
+	
+	protected void saveGameResults(int winner, String[] scores) {
 
 		for (int i = 0; i < this.game.getTeams().size(); i++){					
 			Team team = this.game.getTeams().get(i);
@@ -200,27 +222,33 @@ public class GameActivity extends Activity{
 			if(i==winner){
 				teamStat.setWinner(true);
 			}
+			
+			teamStat.setScore(Double.valueOf(scores[i]));
 
 			team.addGameStat(teamStat);
 			this.db.saveTeamGameStats(teamStat);
-			
+
 			Set<Player> winningPlayers = team.getPlayers();
 			for (Player player : winningPlayers) {
 				PlayerGameStat playerStat = new PlayerGameStat(player);
 				if(i==winner){
 					playerStat.setWinner(true);
 				}
+				playerStat.setScore(Double.valueOf(scores[i]));
 				this.db.savePlayerGameStats(playerStat);
 			}		
 		}
+		
+		this.gameAdapter.notifyDataSetChanged();
 
 	}
 
 	protected void finishGame(){
 		this.game.setState(GameState.COMPLETE);
 		this.db.saveGame(this.game);
-		this.gameAdapter.notifyDataSetChanged();
-		refreshView();
+		showDialog(0);
+		//this.gameAdapter.notifyDataSetChanged();
+		//refreshView();
 	}
 
 	private void generateTeams(List<String> selectedPlayerIds) {
@@ -299,7 +327,7 @@ public class GameActivity extends Activity{
 			button.setOnClickListener(new OnClickListener() {
 
 				public void onClick(View v) {
-					showDialog(4);
+					finishGame();
 				}
 			});
 		} else {

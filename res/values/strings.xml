@@ -32,4 +32,6 @@
     <string name="select_winner">Select Winner</string>
     <string name="enter_mpr">Enter Marks Per Round</string>
     <string name="winner">WINNER!</string>
+    <!-- GAME RESULTS DIALOG -->
+    <string name="save_results">Save Results</string>
 </resources>

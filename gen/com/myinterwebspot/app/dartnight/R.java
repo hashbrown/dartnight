@@ -36,29 +36,33 @@ public final class R {
         public static final int EditTextFirstName=0x7f060001;
         public static final int EditTextLastName=0x7f060002;
         public static final int EditTextShortName=0x7f060004;
-        public static final int GamePlayer1=0x7f060014;
-        public static final int GamePlayer2=0x7f060015;
-        public static final int GamePlayer3=0x7f060016;
-        public static final int GamePlayer4=0x7f060017;
-        public static final int GameTeam=0x7f060012;
+        public static final int GamePlayer1=0x7f060018;
+        public static final int GamePlayer2=0x7f060019;
+        public static final int GamePlayer3=0x7f06001a;
+        public static final int GamePlayer4=0x7f06001b;
+        public static final int GameTeam=0x7f060016;
         public static final int GameView=0x7f060007;
         public static final int LabelFirstName=0x7f060000;
         public static final int LabelShortName=0x7f060003;
-        public static final int TeamScore=0x7f060018;
-        public static final int Winner=0x7f060019;
+        public static final int TeamScore=0x7f06001c;
+        public static final int Winner=0x7f06001d;
         public static final int action_button=0x7f060006;
-        public static final int background=0x7f060013;
-        public static final int player_name=0x7f060010;
+        public static final int background=0x7f060017;
+        public static final int label_team1=0x7f060009;
+        public static final int label_team2=0x7f06000c;
+        public static final int label_team3=0x7f06000f;
+        public static final int label_team4=0x7f060012;
+        public static final int player_name=0x7f060014;
         public static final int save_button=0x7f060005;
-        public static final int score_team1=0x7f060009;
-        public static final int score_team2=0x7f06000b;
-        public static final int score_team3=0x7f06000d;
-        public static final int score_team4=0x7f06000f;
-        public static final int select_players_button=0x7f060011;
+        public static final int score_team1=0x7f06000a;
+        public static final int score_team2=0x7f06000d;
+        public static final int score_team3=0x7f060010;
+        public static final int score_team4=0x7f060013;
+        public static final int select_players_button=0x7f060015;
         public static final int winner_team1=0x7f060008;
-        public static final int winner_team2=0x7f06000a;
-        public static final int winner_team3=0x7f06000c;
-        public static final int winner_team4=0x7f06000e;
+        public static final int winner_team2=0x7f06000b;
+        public static final int winner_team3=0x7f06000e;
+        public static final int winner_team4=0x7f060011;
     }
     public static final class layout {
         public static final int edit_player=0x7f030000;
@@ -101,6 +105,9 @@ public final class R {
         public static final int player_last_name=0x7f050011;
         public static final int player_nick_name=0x7f050012;
         public static final int save_player=0x7f05000c;
+        /**  GAME RESULTS DIALOG 
+         */
+        public static final int save_results=0x7f05001b;
         /**  LIST PLAYERS SCREEN 
          */
         public static final int select_players=0x7f050007;

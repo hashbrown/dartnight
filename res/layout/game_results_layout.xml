@@ -1,0 +1,119 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+      android:layout_width="fill_parent"
+      android:layout_height="wrap_content"
+      android:orientation="vertical"
+      android:padding="5dip">
+      
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="5dip">
+    <RadioButton android:id="@+id/winner_team1"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"/>
+	<TextView android:id="@+id/label_team1" 
+    		  android:layout_width="wrap_content" 
+    		  android:layout_height="wrap_content"
+    		  android:textSize="20dip"
+    		  android:layout_toRightOf="@id/winner_team1"
+    		  android:layout_centerVertical="true"
+    		  android:paddingLeft="5dip"
+    		  android:text="Team 1">
+    </TextView>
+    <EditText android:id="@+id/score_team1" 
+    		  android:layout_width="wrap_content" 
+    		  android:layout_height="wrap_content"
+    		  android:inputType="number|numberDecimal"
+    		  android:hint="enter score"
+    		  android:layout_alignParentRight="true">
+    </EditText>
+</RelativeLayout>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="5dip">
+    <RadioButton android:id="@+id/winner_team2"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"/>
+	<TextView android:id="@+id/label_team2" 
+    		  android:layout_width="wrap_content" 
+    		  android:layout_height="wrap_content"
+    		  android:layout_toRightOf="@id/winner_team2"
+    		  android:layout_centerVertical="true"
+    		  android:paddingLeft="5dip"
+    		  android:textSize="20dip"
+    		  android:text="Team 2">
+    </TextView>
+    <EditText android:id="@+id/score_team2" 
+    		  android:layout_width="wrap_content" 
+    		  android:layout_height="wrap_content"
+    		  android:inputType="number|numberDecimal"
+    		  android:hint="enter score"
+    		  android:layout_alignParentRight="true">
+    </EditText>
+</RelativeLayout>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="5dip">
+    <RadioButton android:id="@+id/winner_team3"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"/>
+	<TextView android:id="@+id/label_team3" 
+    		  android:layout_width="wrap_content" 
+    		  android:layout_height="wrap_content"
+    		  android:layout_toRightOf="@id/winner_team3"
+    		  android:layout_centerVertical="true"
+    		  android:paddingLeft="5dip"
+    		  android:textSize="20dip"
+    		  android:text="Team 3">
+    </TextView>
+    <EditText android:id="@+id/score_team3" 
+    		  android:layout_width="wrap_content" 
+    		  android:layout_height="wrap_content"
+    		  android:inputType="number|numberDecimal"
+    		  android:hint="enter score"
+    		  android:layout_alignParentRight="true">
+    </EditText>
+</RelativeLayout>
+
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="fill_parent"
+    android:layout_height="fill_parent"
+    android:padding="5dip">
+    <RadioButton android:id="@+id/winner_team4"
+          android:layout_width="wrap_content"
+          android:layout_height="wrap_content"
+          android:layout_alignParentLeft="true"/>
+	<TextView android:id="@+id/label_team4" 
+    		  android:layout_width="wrap_content" 
+    		  android:layout_height="wrap_content"
+    		  android:layout_toRightOf="@id/winner_team4"
+    		  android:layout_centerVertical="true"
+    		  android:paddingLeft="5dip"
+    		  android:textSize="20dip"
+    		  android:text="Team 4">
+    </TextView>
+    <EditText android:id="@+id/score_team4" 
+    		  android:layout_width="wrap_content" 
+    		  android:layout_height="wrap_content"
+    		  android:inputType="number|numberDecimal"
+    		  android:hint="enter score"
+    		  android:layout_alignParentRight="true">
+    </EditText>
+</RelativeLayout>
+
+<Button android:id="@+id/save_button" 
+        android:text="@string/save_results"
+        android:layout_width="fill_parent" 
+        android:layout_height="wrap_content" 
+        android:layout_alignParentBottom="true"
+/>
+    
+</LinearLayout>
