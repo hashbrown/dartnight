@@ -28,7 +28,7 @@ public class PlayerViewAdapter extends CursorAdapter {
 	@Override
 	public View newView(Context context, Cursor cursor, ViewGroup parent) {
 		LayoutInflater vi = (LayoutInflater) this.ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-        View view = vi.inflate(android.R.layout.simple_list_item_1, null);
+        View view = vi.inflate(android.R.layout.simple_list_item_1, parent, false);
 		//View view = vi.inflate(R.layout.player_list_item_layout, null);
     	return view;
 	}

@@ -4,7 +4,7 @@ public abstract class AbstractGameStat {
 	
 	private String gameId;
 	private boolean isWinner;
-	private double mpr;
+	private double score;
 	
 	public String getGameId() {
 		return gameId;
@@ -18,11 +18,11 @@ public abstract class AbstractGameStat {
 	public void setWinner(boolean isWinner) {
 		this.isWinner = isWinner;
 	}
-	public double getMpr() {
-		return mpr;
+	public double getScore() {
+		return score;
 	}
-	public void setMpr(double mpr) {
-		this.mpr = mpr;
+	public void setScore(double score) {
+		this.score = score;
 	}
 
 }

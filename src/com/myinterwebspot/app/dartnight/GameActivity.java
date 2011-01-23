@@ -33,9 +33,9 @@ import com.myinterwebspot.app.dartnight.db.DBHelper;
 import com.myinterwebspot.app.dartnight.model.Game;
 import com.myinterwebspot.app.dartnight.model.GameState;
 import com.myinterwebspot.app.dartnight.model.Player;
-import com.myinterwebspot.app.dartnight.model.PlayerStat;
+import com.myinterwebspot.app.dartnight.model.PlayerGameStat;
 import com.myinterwebspot.app.dartnight.model.Team;
-import com.myinterwebspot.app.dartnight.model.TeamStat;
+import com.myinterwebspot.app.dartnight.model.TeamGameStat;
 
 public class GameActivity extends Activity{ 
 
@@ -181,10 +181,10 @@ public class GameActivity extends Activity{
 	protected void updateTeamMPR(Team selectedTeam, String mpr) {
 
 		if(mpr != null && mpr.length() >0){
-			TeamStat stats = selectedTeam.getGameStats(this.game);
-			stats.setMpr(Double.valueOf(mpr));
+			TeamGameStat stats = selectedTeam.getGameStats(this.game);
+			stats.setScore(Double.valueOf(mpr));
 			this.gameAdapter.notifyDataSetChanged();
-			this.db.saveTeamStats(stats);
+			this.db.saveTeamGameStats(stats);
 		}
 
 	}
@@ -195,22 +195,22 @@ public class GameActivity extends Activity{
 
 		for (int i = 0; i < this.game.getTeams().size(); i++){					
 			Team team = this.game.getTeams().get(i);
-			TeamStat teamStat = new TeamStat(team, this.game);
+			TeamGameStat teamStat = new TeamGameStat(team, this.game);
 
 			if(i==winner){
 				teamStat.setWinner(true);
 			}
 
 			team.addGameStat(teamStat);
-			this.db.saveTeamStats(teamStat);
-
+			this.db.saveTeamGameStats(teamStat);
+			
 			Set<Player> winningPlayers = team.getPlayers();
 			for (Player player : winningPlayers) {
-				PlayerStat playerStat = new PlayerStat(player);
+				PlayerGameStat playerStat = new PlayerGameStat(player);
 				if(i==winner){
 					playerStat.setWinner(true);
 				}
-				this.db.savePlayerStats(playerStat);
+				this.db.savePlayerGameStats(playerStat);
 			}		
 		}
 

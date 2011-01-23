@@ -1,15 +1,14 @@
 package com.myinterwebspot.app.dartnight.model;
 
-public class TeamStat extends AbstractGameStat {
+public class TeamStats extends ContestantStats {
 	
 	private String teamId;
 	
-	public TeamStat(Team team, Game game){
+	public TeamStats(Team team){
 		this.teamId = team.getId();
-		setGameId(game.getId());
 	}
 	
-	public TeamStat(String teamId){
+	public TeamStats(String teamId){
 		this.teamId = teamId;
 	}
 	

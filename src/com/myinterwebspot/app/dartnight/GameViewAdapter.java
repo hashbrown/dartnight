@@ -9,7 +9,7 @@ import java.util.List;
 import com.myinterwebspot.app.dartnight.model.Game;
 import com.myinterwebspot.app.dartnight.model.Player;
 import com.myinterwebspot.app.dartnight.model.Team;
-import com.myinterwebspot.app.dartnight.model.TeamStat;
+import com.myinterwebspot.app.dartnight.model.TeamGameStat;
 
 import android.content.Context;
 import android.graphics.drawable.BitmapDrawable;
@@ -70,7 +70,7 @@ public class GameViewAdapter extends BaseAdapter {
 		ViewHolder holder;
         if (view == null) {
             LayoutInflater vi = (LayoutInflater) this.ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-            view = vi.inflate(R.layout.team_layout, null);
+            view = vi.inflate(R.layout.team_layout, parent, false);
             holder = new ViewHolder();
             holder.bkgrd = (ImageView) view.findViewById(R.id.background);
             holder.teamLabel = (TextView) view.findViewById(R.id.GameTeam);
@@ -125,9 +125,9 @@ public class GameViewAdapter extends BaseAdapter {
         
         holder.winner.setVisibility(View.GONE);
 
-        TeamStat stat = team.getGameStats(game);
+        TeamGameStat stat = team.getGameStats(game);
         if(stat != null){
-        	holder.score.setText(String.valueOf(stat.getMpr()));         	
+        	holder.score.setText(String.valueOf(stat.getScore()));         	
         	if(stat.isWinner()){
         		holder.winner.setVisibility(View.VISIBLE);
         	}

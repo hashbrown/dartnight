@@ -5,12 +5,13 @@ import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 
-public class Team {
+public class Team implements Contestant{
 	
 	private String id;
 	private String name;
 	private Set<Player> players = new HashSet<Player>();
-	private Map<String,TeamStat> statMap = new HashMap<String,TeamStat>();
+	private Map<String,TeamGameStat> gameStatMap = new HashMap<String,TeamGameStat>();
+	private ContestantStats stats;
 
 	public String getId() {
 		return id;
@@ -37,12 +38,20 @@ public class Team {
 		this.players.add(player);
 	}
 	
-	public TeamStat getGameStats(Game game){
-		return this.statMap.get(game.getId());
+	public TeamGameStat getGameStats(Game game){
+		return this.gameStatMap.get(game.getId());
 	}
 	
-	public void addGameStat(TeamStat stat){
-		this.statMap.put(stat.getGameId(), stat);
+	public void addGameStat(TeamGameStat stat){
+		this.gameStatMap.put(stat.getGameId(), stat);
+	}
+	
+	public ContestantStats getTeamStats(){
+		return this.stats;
+	}
+
+	public void setStats(ContestantStats stat) {
+		this.stats = stat;
 	}
 
 
