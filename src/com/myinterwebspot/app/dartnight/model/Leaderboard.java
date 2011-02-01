@@ -8,7 +8,7 @@ import com.myinterwebspot.app.dartnight.db.DBHelper;
 
 public class Leaderboard {
 	
-	private static int MAX_LEADERS = 5;
+	public static int MAX_LEADERS = 5;
 	
 	private DBHelper db;
 	
