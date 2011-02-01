@@ -9,7 +9,9 @@ import java.util.Set;
 import android.app.Activity;
 import android.app.Dialog;
 import android.content.Intent;
+import android.os.AsyncTask;
 import android.os.Bundle;
+import android.view.Gravity;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -20,6 +22,7 @@ import android.widget.EditText;
 import android.widget.GridView;
 import android.widget.RadioButton;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.myinterwebspot.app.dartnight.db.DBHelper;
 import com.myinterwebspot.app.dartnight.model.Game;
@@ -30,10 +33,11 @@ import com.myinterwebspot.app.dartnight.model.Team;
 
 public class GameActivity extends Activity{ 
 
-	private DBHelper db;
-	private Game game;
+	DBHelper db;
+	Game game;
 	private ViewHolder viewholder;
-	private BaseAdapter gameAdapter;
+	BaseAdapter gameAdapter;
+	Toast loadToast;
 	
 	// Menu item ids
 	public static final int MENU_CREATE_TEAMS = Menu.FIRST;
@@ -45,40 +49,16 @@ public class GameActivity extends Activity{
 		db = new DBHelper(getApplicationContext());
 
 		final Intent intent = getIntent();
-		String gameId = intent.getStringExtra("gameId");
-		if(gameId != null){
-			game = db.getGame(gameId);        	
-		} else {
-			int numTeams = intent.getIntExtra("nbrOfTeams", 2);
-			game = new Game();
-			game.setName(DateFormat.getDateTimeInstance().format(new Date()));
-			game.setState(GameState.NEW);
-			for (int i = 0; i < numTeams; i++) {
-				game.addTeam(new Team());
-			}			
-		}
-
-		this.gameAdapter = new GameViewAdapter(getApplicationContext(), game);
-
-		initViews(game);
+		loadToast = Toast.makeText(this, "Retreiving Game", Toast.LENGTH_SHORT);
+		loadToast.setGravity(Gravity.CENTER_VERTICAL,0,0);
+		loadToast.show();
+		
+		GameLoaderTask task = new GameLoaderTask();
+		task.execute(intent);
+		
 
 	}
 
-
-
-
-	@Override
-	protected void onRestart() {
-		// TODO Auto-generated method stub
-		super.onRestart();
-	}
-
-
-	@Override
-	protected void onResume() {
-		// TODO Auto-generated method stub
-		super.onResume();
-	}
 
 	@Override
 	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
@@ -379,24 +359,36 @@ public class GameActivity extends Activity{
 		GridView gridview;
 		Button actionBtn;
 
+	}
+	
+	class GameLoaderTask extends AsyncTask<Intent,Void,Game>{
 
-		public GridView getGridview() {
-			return gridview;
+		@Override
+		protected Game doInBackground(Intent... params) {
+			
+			String gameId = params[0].getStringExtra("gameId");
+			if(gameId != null){
+				game = db.getGame(gameId);        	
+			} else {
+				int numTeams = params[0].getIntExtra("nbrOfTeams", 2);
+				game = new Game();
+				game.setName(DateFormat.getDateTimeInstance().format(new Date()));
+				game.setState(GameState.NEW);
+				for (int i = 0; i < numTeams; i++) {
+					game.addTeam(new Team());
+				}			
+			}
+			
+			return game;
 		}
 
-		public void setGridview(GridView gridview) {
-			this.gridview = gridview;
+		@Override
+		protected void onPostExecute(Game result) {
+			gameAdapter = new GameViewAdapter(getApplicationContext(), game);
+			initViews(game);
+			loadToast.cancel();
 		}
-
-		public Button getActionBtn() {
-			return actionBtn;
-		}
-
-		public void setActionBtn(Button actionBtn) {
-			this.actionBtn = actionBtn;
-		}
-
-
-
+		
+		
 	}
 }
