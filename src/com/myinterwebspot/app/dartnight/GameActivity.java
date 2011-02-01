@@ -66,9 +66,11 @@ public class GameActivity extends Activity{
 		if(resultCode == RESULT_OK){
 			List<String> selectedPlayerIds = data.getStringArrayListExtra("selectedPlayers");
 			generateTeams(selectedPlayerIds);
-			this.db.saveGame(game);
 			this.gameAdapter.notifyDataSetChanged();
 			refreshView();
+			
+			new SaveGameTask().execute(this.game);
+			
 		}
 	}
 
@@ -212,7 +214,7 @@ public class GameActivity extends Activity{
 
 	protected void finishGame(){
 		this.game.setState(GameState.COMPLETE);
-		this.db.saveGame(this.game);
+		new SaveGameTask().execute(this.game);
 		showDialog(0);
 		
 	}
@@ -273,7 +275,7 @@ public class GameActivity extends Activity{
 				public void onClick(View v) {
 					((Button)v).setText("Finish Game");
 					GameActivity.this.game.setState(GameState.IN_PROGRESS);
-					GameActivity.this.db.saveGame(GameActivity.this.game);
+					new SaveGameTask().execute(GameActivity.this.game);
 					refreshView();
 				}
 			});
@@ -303,10 +305,11 @@ public class GameActivity extends Activity{
 		
 		Game rematch = generateRematchGame(game);
 		this.game = rematch;
-		this.db.saveGame(GameActivity.this.game);
 		this.gameAdapter = new GameViewAdapter(getApplicationContext(), rematch);
 		this.viewholder.gridview.setAdapter(this.gameAdapter);
 		refreshView();
+
+		new SaveGameTask().execute(game);
 		
 	}
 	
@@ -387,8 +390,16 @@ public class GameActivity extends Activity{
 			gameAdapter = new GameViewAdapter(getApplicationContext(), game);
 			initViews(game);
 			loadToast.cancel();
+		}		
+	}
+	
+	class SaveGameTask extends AsyncTask<Game,Void,Void>{
+
+		@Override
+		protected Void doInBackground(Game... params) {
+			db.saveGame(params[0]);
+			return null;
 		}
-		
 		
 	}
 }
