@@ -1,53 +1,40 @@
 package com.myinterwebspot.app.dartnight;
 
 import java.text.DateFormat;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
-import java.util.Locale;
 import java.util.Set;
 
 import android.app.Activity;
-import android.app.AlertDialog;
 import android.app.Dialog;
-import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.res.Resources;
 import android.os.Bundle;
-import android.text.InputType;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.View.OnClickListener;
-import android.widget.AdapterView;
 import android.widget.BaseAdapter;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.GridView;
-import android.widget.ListAdapter;
 import android.widget.RadioButton;
 import android.widget.TextView;
-import android.widget.AdapterView.OnItemClickListener;
 
 import com.myinterwebspot.app.dartnight.db.DBHelper;
 import com.myinterwebspot.app.dartnight.model.Game;
+import com.myinterwebspot.app.dartnight.model.GameStat;
 import com.myinterwebspot.app.dartnight.model.GameState;
 import com.myinterwebspot.app.dartnight.model.Player;
-import com.myinterwebspot.app.dartnight.model.PlayerGameStat;
 import com.myinterwebspot.app.dartnight.model.Team;
-import com.myinterwebspot.app.dartnight.model.TeamGameStat;
 
 public class GameActivity extends Activity{ 
 
 	private DBHelper db;
 	private Game game;
-	private Button actionBtn;
 	private ViewHolder viewholder;
 	private BaseAdapter gameAdapter;
-	private Resources rsc;
-
+	
 	// Menu item ids
 	public static final int MENU_CREATE_TEAMS = Menu.FIRST;
 
@@ -145,7 +132,6 @@ public class GameActivity extends Activity{
 
 		dialog.setContentView(R.layout.game_results_layout);
 		dialog.setTitle("Select Winner and Enter Scores");
-		//dialog.getWindow().setSoftInputMode(WindowManager.LayoutParams.SOFT_INPUT_STATE_VISIBLE|WindowManager.LayoutParams.SOFT_INPUT_ADJUST_RESIZE);
 		
 		final RadioButton[] btnGroup = new RadioButton[4];
 		for (int i = 0; i < radioBtns.length; i++) {
@@ -202,8 +188,9 @@ public class GameActivity extends Activity{
 					}
 					scores[i] = scoreGroup[i].getText().toString();
 				}
-				dialog.dismiss();
 				saveGameResults(winner,scores);				
+				dialog.dismiss();
+				refreshView();
 			}
 		});
 
@@ -217,7 +204,7 @@ public class GameActivity extends Activity{
 
 		for (int i = 0; i < this.game.getTeams().size(); i++){					
 			Team team = this.game.getTeams().get(i);
-			TeamGameStat teamStat = new TeamGameStat(team, this.game);
+			GameStat teamStat = new GameStat(team, this.game);
 
 			if(i==winner){
 				teamStat.setWinner(true);
@@ -226,16 +213,16 @@ public class GameActivity extends Activity{
 			teamStat.setScore(Double.valueOf(scores[i]));
 
 			team.addGameStat(teamStat);
-			this.db.saveTeamGameStats(teamStat);
+			this.db.saveGameStats(teamStat);
 
 			Set<Player> winningPlayers = team.getPlayers();
 			for (Player player : winningPlayers) {
-				PlayerGameStat playerStat = new PlayerGameStat(player);
+				GameStat playerStat = new GameStat(player, this.game);
 				if(i==winner){
 					playerStat.setWinner(true);
 				}
 				playerStat.setScore(Double.valueOf(scores[i]));
-				this.db.savePlayerGameStats(playerStat);
+				this.db.saveGameStats(playerStat);
 			}		
 		}
 		
@@ -247,8 +234,7 @@ public class GameActivity extends Activity{
 		this.game.setState(GameState.COMPLETE);
 		this.db.saveGame(this.game);
 		showDialog(0);
-		//this.gameAdapter.notifyDataSetChanged();
-		//refreshView();
+		
 	}
 
 	private void generateTeams(List<String> selectedPlayerIds) {
@@ -282,25 +268,14 @@ public class GameActivity extends Activity{
 
 	private void initViews(Game game) {
 
-		final Game gameRef = game;
 		GridView gridview = (GridView) findViewById(R.id.GameView);
 		gridview.setAdapter(this.gameAdapter);
 
-		gridview.setOnItemClickListener(new OnItemClickListener() {
-
-			public void onItemClick(AdapterView<?> arg0, View arg1, int position,
-					long rowId) {
-				if(gameRef.getState() == GameState.COMPLETE){
-					showDialog(position);	
-				}
-			}
-		});
-
-		Button actionBtn = (Button) findViewById(R.id.action_button);
+		Button btn = (Button) findViewById(R.id.action_button);
 
 		this.viewholder = new ViewHolder();
-		this.viewholder.setActionBtn(actionBtn);
-		this.viewholder.setGridview(gridview);
+		this.viewholder.actionBtn = btn;
+		this.viewholder.gridview = gridview;
 
 		refreshView();
 
@@ -308,7 +283,7 @@ public class GameActivity extends Activity{
 
 	protected void refreshView(){
 
-		Button button = this.viewholder.getActionBtn();
+		Button button = this.viewholder.actionBtn;
 		button.setVisibility(View.VISIBLE);
 
 		if (readyToStart(game)){
@@ -330,10 +305,51 @@ public class GameActivity extends Activity{
 					finishGame();
 				}
 			});
+		} else if(game.getState() == GameState.COMPLETE){
+			button.setText("Play Rematch");
+			button.setOnClickListener(new OnClickListener() {
+
+				public void onClick(View v) {
+					doRematch();
+				}
+			});
 		} else {
 			button.setVisibility(View.GONE);
 		}
 
+	}
+	
+	protected void doRematch(){
+		
+		Game rematch = generateRematchGame(game);
+		this.game = rematch;
+		this.db.saveGame(GameActivity.this.game);
+		this.gameAdapter = new GameViewAdapter(getApplicationContext(), rematch);
+		this.viewholder.gridview.setAdapter(this.gameAdapter);
+		refreshView();
+		
+	}
+	
+	protected Game generateRematchGame(Game existingGame){
+		
+		Game newGame = new Game();
+		newGame.setName(DateFormat.getDateTimeInstance().format(new Date()));
+		newGame.setState(GameState.IN_PROGRESS);
+		newGame.setParent(existingGame);
+		
+		int idx = 0;
+		for(Team team:existingGame.getTeams()){
+			GameStat gameStats = team.getGameStats(existingGame);
+			if(gameStats.isWinner()){
+				idx = 0;
+			}
+			
+			newGame.getTeams().add(idx, team);
+			
+			idx++;
+		}
+		
+		return newGame;
 	}
 
 
@@ -360,8 +376,8 @@ public class GameActivity extends Activity{
 
 	class ViewHolder {
 
-		private GridView gridview;
-		private Button actionBtn;
+		GridView gridview;
+		Button actionBtn;
 
 
 		public GridView getGridview() {

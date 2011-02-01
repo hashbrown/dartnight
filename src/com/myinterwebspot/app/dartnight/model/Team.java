@@ -10,7 +10,7 @@ public class Team implements Contestant{
 	private String id;
 	private String name;
 	private Set<Player> players = new HashSet<Player>();
-	private Map<String,TeamGameStat> gameStatMap = new HashMap<String,TeamGameStat>();
+	private Map<String,GameStat> gameStatMap = new HashMap<String,GameStat>();
 	private ContestantStats stats;
 
 	public String getId() {
@@ -38,19 +38,19 @@ public class Team implements Contestant{
 		this.players.add(player);
 	}
 	
-	public TeamGameStat getGameStats(Game game){
+	public GameStat getGameStats(Game game){
 		return this.gameStatMap.get(game.getId());
 	}
 	
-	public void addGameStat(TeamGameStat stat){
+	public void addGameStat(GameStat stat){
 		this.gameStatMap.put(stat.getGameId(), stat);
 	}
 	
-	public ContestantStats getTeamStats(){
+	public ContestantStats getContestantStats(){
 		return this.stats;
 	}
 
-	public void setStats(ContestantStats stat) {
+	public void setContestantStats(ContestantStats stat) {
 		this.stats = stat;
 	}
 

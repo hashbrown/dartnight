@@ -46,7 +46,7 @@ public class TeamTable implements BaseColumns {
 	public static void create(SQLiteDatabase db){
 		Log.i("DBHelper", "CREATING TEAM TABLE");
 		db.execSQL("CREATE TABLE " + TABLE_NAME + " ("
-				+ TeamTable._ID + " INTEGER PRIMARY KEY, "
+				+ TeamTable._ID + " TEXT, "
 				+ TeamTable.NAME + " TEXT, "
 				+ TeamTable.CREATED_DATE + " INTEGER, "
 				+ TeamTable.MODIFIED_DATE + " INTEGER);");

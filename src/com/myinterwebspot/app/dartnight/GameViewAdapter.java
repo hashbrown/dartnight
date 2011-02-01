@@ -6,16 +6,9 @@ package com.myinterwebspot.app.dartnight;
 import java.util.ArrayList;
 import java.util.List;
 
-import com.myinterwebspot.app.dartnight.model.Game;
-import com.myinterwebspot.app.dartnight.model.Player;
-import com.myinterwebspot.app.dartnight.model.Team;
-import com.myinterwebspot.app.dartnight.model.TeamGameStat;
-
 import android.content.Context;
-import android.graphics.drawable.BitmapDrawable;
 import android.text.Spannable;
 import android.text.SpannableString;
-import android.text.style.StyleSpan;
 import android.text.style.UnderlineSpan;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -23,6 +16,11 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.myinterwebspot.app.dartnight.model.Game;
+import com.myinterwebspot.app.dartnight.model.GameStat;
+import com.myinterwebspot.app.dartnight.model.Player;
+import com.myinterwebspot.app.dartnight.model.Team;
 
 /**
  * @author hashbrown
@@ -125,7 +123,7 @@ public class GameViewAdapter extends BaseAdapter {
         
         holder.winner.setVisibility(View.GONE);
 
-        TeamGameStat stat = team.getGameStats(game);
+        GameStat stat = team.getGameStats(game);
         if(stat != null){
         	holder.score.setText(String.valueOf(stat.getScore()));         	
         	if(stat.isWinner()){
@@ -136,7 +134,7 @@ public class GameViewAdapter extends BaseAdapter {
         return view;
 	}
 	
-	class ViewHolder {
+	static class ViewHolder {
 		ImageView bkgrd;
 		TextView teamLabel;
 		TextView team1;

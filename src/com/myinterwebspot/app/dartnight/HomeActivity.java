@@ -35,6 +35,12 @@ public class HomeActivity extends TabActivity {
                           res.getDrawable(android.R.drawable.ic_menu_manage))
                       .setContent(intent);
         tabHost.addTab(spec);
+        
+        intent = new Intent().setClass(this, LeaderboardActivity.class);
+        spec = tabHost.newTabSpec("leaders").setIndicator("Leaderboard",
+                          res.getDrawable(android.R.drawable.ic_menu_manage))
+                      .setContent(intent);
+        tabHost.addTab(spec);
 
         tabHost.setCurrentTab(0);
 

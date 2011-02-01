@@ -6,4 +6,12 @@ public interface Contestant {
 	
 	public void setId(String id);
 	
+	public GameStat getGameStats(Game game);
+	
+	public void addGameStat(GameStat stat);
+	
+	public ContestantStats getContestantStats();
+
+	public void setContestantStats(ContestantStats stat);
+	
 }

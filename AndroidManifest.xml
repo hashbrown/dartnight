@@ -17,6 +17,7 @@
         <activity android:name=".GameActivity"/>
 		<activity android:name=".ManagePlayersActivity"/>
 		<activity android:name=".EditPlayerActivity"/>
+		<activity android:name=".LeaderboardActivity"/>
     </application>
 
 

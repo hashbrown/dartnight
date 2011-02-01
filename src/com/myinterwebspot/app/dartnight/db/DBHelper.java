@@ -1,7 +1,10 @@
 package com.myinterwebspot.app.dartnight.db;
 
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Date;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
@@ -17,17 +20,16 @@ import com.myinterwebspot.app.dartnight.model.Contestant;
 import com.myinterwebspot.app.dartnight.model.ContestantStatType;
 import com.myinterwebspot.app.dartnight.model.ContestantStats;
 import com.myinterwebspot.app.dartnight.model.Game;
+import com.myinterwebspot.app.dartnight.model.GameStat;
 import com.myinterwebspot.app.dartnight.model.GameState;
 import com.myinterwebspot.app.dartnight.model.Player;
-import com.myinterwebspot.app.dartnight.model.PlayerGameStat;
 import com.myinterwebspot.app.dartnight.model.Team;
-import com.myinterwebspot.app.dartnight.model.TeamGameStat;
 
 
 public class DBHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "DartsDB";
-	private static final int DATABASE_VERSION = 1;
+	private static final int DATABASE_VERSION = 2;
 
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
@@ -40,10 +42,9 @@ public class DBHelper extends SQLiteOpenHelper {
 		TeamTable.create(db);
 		TeamPlayersTable.create(db);
 		PlayerTable.create(db);
-		TeamGameStatsTable.create(db);
+		GameStatsTable.create(db);
 		PlayerGameStatsTable.create(db);
 		StatsRollupTable.create(db);
-		LeaderboardTable.create(db);
 	}
 
 	@Override
@@ -51,16 +52,9 @@ public class DBHelper extends SQLiteOpenHelper {
 		Log.w("LOG", "Upgrading database from version " + oldVersion + " to " +
 				newVersion + ", which will destroy all old data");
 
-		GameTable.drop(db);
-		GameTeamsTable.drop(db);
-		TeamTable.drop(db);
-		TeamPlayersTable.drop(db);
-		PlayerTable.drop(db);
-		TeamGameStatsTable.drop(db);
-		PlayerGameStatsTable.drop(db);
-		StatsRollupTable.drop(db);
-		LeaderboardTable.drop(db);
-		onCreate(db);
+		UpgradeStrategyFactory factory = new UpgradeStrategyFactory();
+		DBUpgradeStrategy upgradeStrategy = factory.getUpgradeStrategy(oldVersion, newVersion);
+		upgradeStrategy.upgrade(db);
 	}
 
 	public Cursor getGames(){
@@ -80,12 +74,18 @@ public class DBHelper extends SQLiteOpenHelper {
 
 		if(gameCurs.moveToFirst()){
 			game = new Game();
-			game.setId(gameCurs.getString(0));
-			game.setName(gameCurs.getString(1));
-			game.setState(GameState.valueOf(gameCurs.getString(2)));
-			game.setCreationDate(new Date(gameCurs.getLong(3)));
-			game.setModificationDate(new Date(gameCurs.getLong(4)));
-
+			game.setId(gameCurs.getString(gameCurs.getColumnIndex(GameTable._ID)));
+			game.setName(gameCurs.getString(gameCurs.getColumnIndex(GameTable.NAME)));
+			game.setState(GameState.valueOf(gameCurs.getString(gameCurs.getColumnIndex(GameTable.STATE))));
+			game.setCreationDate(new Date(gameCurs.getLong(gameCurs.getColumnIndex(GameTable.CREATED_DATE))));
+			game.setModificationDate(new Date(gameCurs.getLong(gameCurs.getColumnIndex(GameTable.MODIFIED_DATE))));
+			
+			String parentId = gameCurs.getString(gameCurs.getColumnIndex(GameTable.PARENT));
+			if(parentId != null){
+				Game parent = getGame(parentId);
+				game.setParent(parent);
+			}
+			
 			loadTeams(game);
 		}
 
@@ -99,6 +99,10 @@ public class DBHelper extends SQLiteOpenHelper {
 		values.put(GameTable.STATE, game.getState().toString());
 		Long now = Long.valueOf(System.currentTimeMillis());
 		values.put(GameTable.MODIFIED_DATE, now);
+		
+		if(game.getParent() != null){
+			values.put(GameTable.PARENT, game.getParent().getId());
+		}
 
 		if(game.getId() == null){
 			values.put(GameTable.NAME, game.getName());
@@ -124,15 +128,47 @@ public class DBHelper extends SQLiteOpenHelper {
 		values.put(TeamTable.NAME, team.getName());
 
 		if(team.getId() == null){
-			values.put(TeamTable.CREATED_DATE, now);
-			long teamId = insertTeam(values);
-			team.setId(String.valueOf(teamId));
+			String id = generateTeamId(team);
+			if(teamExists(id)){
+				team.setId(id);
+				updateTeam(id, values);
+			} else {
+				values.put(TeamTable._ID,id);
+				values.put(TeamTable.CREATED_DATE, now);
+				long teamId = insertTeam(values);
+				team.setId(id);
+			}
 		} else {
 			updateTeam(team.getId(), values);
 		}
 
 		saveTeamPlayers(team.getId(), team.getPlayers());
 
+	}
+
+	private String generateTeamId(Team team) {
+
+		List<Player> players = new ArrayList(team.getPlayers());
+		Collections.sort(players, new Comparator<Player>() {
+
+			public int compare(Player player1, Player player2) {
+				if (Integer.valueOf(player1.getId()) > Integer.valueOf(player2.getId())){
+					return -1;
+				} else if (Integer.valueOf(player1.getId()) < Integer.valueOf(player2.getId())){
+					return 11;
+				}
+				return 0;
+			}
+		});
+
+		StringBuffer id = new StringBuffer();
+		for (Player player : players) {
+			id.append(player.getId()).append(":");
+		}
+
+		id.deleteCharAt(id.lastIndexOf(":"));
+
+		return id.toString();
 	}
 
 	private void saveTeamPlayers(String teamId, Set<Player> players) {
@@ -189,6 +225,7 @@ public class DBHelper extends SQLiteOpenHelper {
 			player.setFirstName(playerCurs.getString(1));
 			player.setLastName(playerCurs.getString(2));
 			player.setNickName(playerCurs.getString(3));
+			loadContestantStats(player);
 
 		}
 
@@ -260,7 +297,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	private void updateTeam(String teamId, ContentValues values) {
 		Log.d("DBHelper", "Updating Team[" + teamId + "]");
-		getWritableDatabase().update(TeamTable.TABLE_NAME, values, TeamTable._ID + "=" + teamId, null);
+		getWritableDatabase().update(TeamTable.TABLE_NAME, values, TeamTable._ID + "= ?", new String[]{teamId});
 		Log.d("DBHelper", "Updated Team[" + teamId + "]");
 
 	}
@@ -293,7 +330,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	}
 
 	public void deleteTeamPlayers(String teamId){
-		getWritableDatabase().delete(TeamPlayersTable.TABLE_NAME, TeamPlayersTable.TEAM_ID + "=" + teamId, null);
+		getWritableDatabase().delete(TeamPlayersTable.TABLE_NAME, TeamPlayersTable.TEAM_ID + "= ?", new String[]{teamId});
 	}
 
 	private void insertTeamPlayers(ContentValues values) {
@@ -316,14 +353,14 @@ public class DBHelper extends SQLiteOpenHelper {
 		Team team = null;
 
 		Cursor teamCurs = 
-			getReadableDatabase().query(TeamTable.TABLE_NAME, null, TeamTable._ID + "=" + teamId, null, null, null, null);
+			getReadableDatabase().query(TeamTable.TABLE_NAME, null, TeamTable._ID + "= ?", new String[]{teamId}, null, null, null);
 
 		if(teamCurs.moveToFirst()){
 			team = new Team();			
 			team.setId(teamCurs.getString(0));
 			team.setName(teamCurs.getString(1));
 			loadPlayers(team);	
-			loadTeamStats(team);
+			loadContestantStats(team);
 		}
 
 		teamCurs.close();
@@ -332,12 +369,29 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	}
 
+	public boolean teamExists(String teamId){
+
+		if(teamId == null || teamId.length() == 0){
+			return false;
+		}
+
+		Cursor teamCurs = 
+			getReadableDatabase().query(TeamTable.TABLE_NAME, new String[]{TeamTable._ID}, TeamTable._ID + "= ?", new String[]{teamId}, null, null, null);
+		
+		boolean exists = teamCurs.moveToFirst();
+		teamCurs.close();
+
+		return exists;
+
+	}
+
 	protected void loadTeams(Game game){
 
 		String query = "SELECT t.* FROM " + TeamTable.TABLE_NAME + " t" +
 		" LEFT OUTER JOIN " + GameTeamsTable.TABLE_NAME + " gt " + 
 		" ON (t._id = gt.team_id) " +
-		" WHERE gt.game_id = ?";
+		" WHERE gt.game_id = ? " +
+		" ORDER BY gt.rowid";
 		Cursor teamCurs = 
 			getReadableDatabase().rawQuery(query, new String[]{game.getId()});
 
@@ -346,40 +400,13 @@ public class DBHelper extends SQLiteOpenHelper {
 			Team team = new Team();
 			team.setId(teamCurs.getString(0));
 			team.setName(teamCurs.getString(1));
-			loadTeamGameStats(game,team);
+			loadGameStats(game,team);
 			loadPlayers(team);	
 			game.addTeam(team);
 			teamCurs.moveToNext();
 		}				
 
 		teamCurs.close();
-	}
-
-	private void loadTeamGameStats(Game game, Team team) {
-
-		TeamGameStat stat = getTeamstatsForGame(game, team);
-		team.addGameStat(stat);
-
-	}
-	
-	
-	private TeamGameStat getTeamstatsForGame(Game game, Team team){
-
-		TeamGameStat stats = new TeamGameStat(team);
-		stats.setGameId(game.getId());
-
-		String whereClause = TeamGameStatsTable.TEAM_ID + "= ? AND " + TeamGameStatsTable.GAME_ID + "= ?";
-		String[] whereArgs = new String[]{team.getId(),game.getId()};
-
-		Cursor curs = getReadableDatabase().query(TeamGameStatsTable.TABLE_NAME, null, whereClause, whereArgs, null, null, null);
-		if(curs.moveToFirst()){
-			stats.setScore(curs.getDouble(2));
-			stats.setWinner(curs.getInt(3)==1?true:false);
-		}
-
-		curs.close();
-
-		return stats;
 	}
 
 	protected void loadPlayers(Team team){
@@ -408,47 +435,71 @@ public class DBHelper extends SQLiteOpenHelper {
 		playerCurs.close();
 	}
 
-	public void saveTeamGameStats(TeamGameStat teamStats) {
+	private void loadGameStats(Game game, Contestant contestant) {
 
-		ContentValues values = new ContentValues();
-		values.put(TeamGameStatsTable.TEAM_ID, teamStats.getTeam().getId());
-		values.put(TeamGameStatsTable.GAME_ID, teamStats.getGameId());		
-		values.put(TeamGameStatsTable.WINNER, teamStats.isWinner());
-		values.put(TeamGameStatsTable.SCORE, teamStats.getScore());
+		GameStat stat = getGameStats(game, contestant);
+		contestant.addGameStat(stat);
 
-		String whereClause = TeamGameStatsTable.TEAM_ID + "= ? AND " + TeamGameStatsTable.GAME_ID + "= ?";
-		String[] whereArgs = new String[]{teamStats.getTeam().getId(),teamStats.getGameId()};
+	}
 
-		Cursor curs = getReadableDatabase().query(TeamGameStatsTable.TABLE_NAME, null, whereClause, whereArgs, null, null, null);
-		if(curs.isAfterLast()){
-			insertTeamGameStats(values);
-		} else {
-			updateTeamGameStats(teamStats.getTeam().getId(),teamStats.getGameId(), values);
+
+	private GameStat getGameStats(Game game, Contestant contestant){
+
+		GameStat stats = new GameStat(contestant);
+		stats.setGameId(game.getId());
+
+		String whereClause = GameStatsTable.GAME_ID + "= ? AND " +
+		GameStatsTable.CONTESTANT_ID + "= ? AND " +
+		GameStatsTable.CONTESTANT_TYPE + "= ?";
+		String[] whereArgs = new String[]{game.getId(), contestant.getId(), contestant.getClass().getName()};
+
+		Cursor curs = getReadableDatabase().query(GameStatsTable.TABLE_NAME, null, whereClause, whereArgs, null, null, null);
+		if(curs.moveToFirst()){
+			stats.setScore(curs.getDouble(3));
+			stats.setWinner(curs.getInt(4)==1?true:false);
 		}
-		
+
 		curs.close();
 
-		updateTeamStats(teamStats);
-		
+		return stats;
 	}
 
 
-	public void savePlayerGameStats(PlayerGameStat playerStats) {
 
-		// TODO Replace the replace!
+	public void saveGameStats(GameStat gameStats) {
+
 		ContentValues values = new ContentValues();
-		values.put(PlayerGameStatsTable.PLAYER_ID, playerStats.getPlayerId());
-		values.put(PlayerGameStatsTable.GAME_ID, playerStats.getGameId());
-		values.put(PlayerGameStatsTable.WINNER, playerStats.isWinner());
-		values.put(PlayerGameStatsTable.SCORE, playerStats.getScore());
+		values.put(GameStatsTable.GAME_ID, gameStats.getGameId());		
+		values.put(GameStatsTable.CONTESTANT_ID, gameStats.getContestant().getId());
+		values.put(GameStatsTable.CONTESTANT_TYPE, gameStats.getContestant().getClass().getName());
+		values.put(GameStatsTable.WINNER, gameStats.isWinner());
+		values.put(GameStatsTable.SCORE, gameStats.getScore());
 
-		getWritableDatabase().replace(PlayerGameStatsTable.TABLE_NAME, null, values);
+		String whereClause = GameStatsTable.GAME_ID + "= ? AND " +
+		GameStatsTable.CONTESTANT_ID + "= ? AND " +
+		GameStatsTable.CONTESTANT_TYPE + "= ?";
+
+		String[] whereArgs = new String[]{gameStats.getGameId(), 
+				gameStats.getContestant().getId(), gameStats.getContestant().getClass().getName()};
+
+		Cursor curs = getReadableDatabase().query(GameStatsTable.TABLE_NAME, null, whereClause, whereArgs, null, null, null);
+		if(curs.isAfterLast()){
+			insertGameStats(values);
+		} else {
+			updateGameStats(gameStats, values);
+		}
+
+		curs.close();
+
+		updateGameStats(gameStats);
 
 	}
 
-	private long insertTeamGameStats(ContentValues values) {
 
-		long rowId = getWritableDatabase().insert(TeamGameStatsTable.TABLE_NAME, null, values);
+
+	private long insertGameStats(ContentValues values) {
+
+		long rowId = getWritableDatabase().insert(GameStatsTable.TABLE_NAME, null, values);
 		if( rowId < 0){
 			throw new SQLException("Failed to insert new TeamStat");
 		}
@@ -456,19 +507,25 @@ public class DBHelper extends SQLiteOpenHelper {
 		return rowId;
 	}
 
-	private void updateTeamGameStats(String teamId, String gameId, ContentValues values) {
-		String whereClause = TeamGameStatsTable.TEAM_ID + "= ? AND " + TeamGameStatsTable.GAME_ID + "= ?";
-		String[] whereArgs = new String[]{teamId,gameId};
-		getWritableDatabase().update(TeamGameStatsTable.TABLE_NAME, values, whereClause, whereArgs);
+
+	private void updateGameStats(GameStat stats, ContentValues values) {
+		String whereClause = GameStatsTable.GAME_ID + "= ? AND " +
+		GameStatsTable.CONTESTANT_ID + "= ? AND " +
+		GameStatsTable.CONTESTANT_TYPE + "= ?";
+
+		String[] whereArgs = new String[]{stats.getGameId(), 
+				stats.getContestant().getId(), stats.getContestant().getClass().getName()};
+
+		getWritableDatabase().update(GameStatsTable.TABLE_NAME, values, whereClause, whereArgs);
 
 	}
 
-	protected void loadTeamStats(Team team) {
-		team.setStats(getContestantStats(team));		
+	protected void loadContestantStats(Contestant contestant) {
+		contestant.setContestantStats(getContestantStats(contestant));		
 	}
-	
+
 	private ContestantStats getContestantStats(Contestant contestant) {
-		
+
 		String whereClause = StatsRollupTable.ID + "= ? AND " + StatsRollupTable.TYPE + "= ?";
 		String[] whereArgs = new String[]{contestant.getId(),contestant.getClass().getName()};
 
@@ -484,125 +541,132 @@ public class DBHelper extends SQLiteOpenHelper {
 		}
 
 		statCurs.close();
-		
+
 		return stat;
-		
+
 	}
-	
-	
-	private void updateTeamStats(TeamGameStat gameStats) {
-		
+
+
+	private void updateGameStats(GameStat gameStats) {
+
 		boolean insert = false;
-		
-		Team team = gameStats.getTeam();
-		ContestantStats stats = getContestantStats(team);
+
+		ContestantStats stats = getContestantStats(gameStats.getContestant());
 		if(stats.getHighScore() == 0.0){
 			insert = true;
 		}
-		
+
 		if(gameStats.isWinner()){
 			stats.setWins(stats.getWins() + 1);
 		} else {
 			stats.setLosses(stats.getLosses() + 1);
 		}
-		
+
 		if(gameStats.getScore() > stats.getHighScore()){
 			stats.setHighScore(gameStats.getScore());
 		}
-		
+
 		double avgMpr = stats.getAvgScore();
 		int totalgames = stats.getWins() + stats.getLosses();
-		
+
 		double newAvgMpr = (avgMpr + gameStats.getScore())/totalgames;
 		stats.setAvgScore(newAvgMpr);
-		
+
 		ContentValues values = new ContentValues();
 		values.put(StatsRollupTable.HIGH_SCORE, stats.getHighScore());
 		values.put(StatsRollupTable.AVG_SCORE, stats.getAvgScore());
 		values.put(StatsRollupTable.WINS, stats.getWins());
 		values.put(StatsRollupTable.LOSSES, stats.getLosses());
-		
+
 		if(insert){
-			insertContestantStats(team, values);
+			insertContestantStats(gameStats.getContestant(), values);
 		} else {
-			updateContestantStats(team, values);
+			updateContestantStats(gameStats.getContestant(), values);
 		}
-		
-		
+
 	}
 
 	private void insertContestantStats(Contestant contestant, ContentValues values) {
-		
+
 		values.put(StatsRollupTable.ID, contestant.getId());
 		values.put(StatsRollupTable.TYPE, contestant.getClass().getName());
-		
+
 		long rowId = getWritableDatabase().insert(StatsRollupTable.TABLE_NAME, null, values);
 		if( rowId < 0){
 			throw new SQLException("Failed to insert new TeamPlayers");
 		}
 
-		
+
 	}
-	
+
 	private void updateContestantStats(Contestant contestant, ContentValues values) {
-		
+
 		String whereClause = StatsRollupTable.ID + "= ? AND " + StatsRollupTable.TYPE + "= ?";
 		String[] whereArgs = new String[]{contestant.getId(),contestant.getClass().getName()};
 		getWritableDatabase().update(StatsRollupTable.TABLE_NAME, values, whereClause, whereArgs);
-		
+
 	}
 
-	
+
 
 	public List<Team> getLeadingTeams(ContestantStatType statType, int numLeaders) {
-		
-		List<Team> leaders = new ArrayList<Team>();
-		
-		Cursor statCurs = getLeaders(Team.class, statType);
-		
-		int idx = 0;
-		statCurs.moveToFirst();
-		while(!statCurs.isAfterLast() && idx < numLeaders){
-			Team team = getTeam(statCurs.getString(0));
-			leaders.add(team);
-			idx++;
-			statCurs.moveToNext();
-		}
-		
-		statCurs.close();
-		
-		return leaders;
+
+		return (List<Team>) getLeadingContestants(Team.class, statType, numLeaders);
 	}
-	
+
 	public List<Player> getLeadingPlayers(ContestantStatType statType, int numLeaders) {
-		
-		List<Player> leaders = new ArrayList<Player>();
-		
-		Cursor statCurs = getLeaders(Player.class, statType);
-		
+
+		return (List<Player>) getLeadingContestants(Player.class, statType, numLeaders);
+	}
+
+	private List<? extends Contestant> getLeadingContestants(Class<? extends Contestant> contestantType, ContestantStatType statType, int numLeaders){
+
+		List<Contestant> leaders = new ArrayList<Contestant>();
+
+		Cursor statCurs = getLeaders(contestantType, statType);
+		Contestant contestant = null;
 		int idx = 0;
 		statCurs.moveToFirst();
 		while(!statCurs.isAfterLast() && idx < numLeaders){
-			Player player = getPlayer(statCurs.getString(0));
-			leaders.add(player);
+			if(contestantType == Team.class){
+				contestant = getTeam(statCurs.getString(0));				
+			} else {
+				contestant = getPlayer(statCurs.getString(0));
+			}
+			leaders.add(contestant);
 			idx++;
 			statCurs.moveToNext();
 		}
-		
+
 		statCurs.close();
-		
+
 		return leaders;
 	}
-	
-	private Cursor getLeaders(Class contestantType, ContestantStatType statType){
-		
-		String whereClause = LeaderboardTable.LEADER_TYPE + "= ? AND " + LeaderboardTable.STAT_TYPE + "= ?";
-		String[] whereArgs = new String[]{contestantType.getName(),statType.toString()};
+
+	private Cursor getLeaders(Class<? extends Contestant> contestantType, ContestantStatType statType){
+
+		String whereClause = StatsRollupTable.TYPE + "= ?";
+		String[] whereArgs = new String[]{contestantType.getName()};
+		String orderBy = null;
+
+		switch (statType) {
+		case TOP_SCORE_STAT:
+			orderBy = "high_score desc";
+			break;
+		case AVG_SCORE_STAT:
+			orderBy = "avg_score desc";
+			break;
+		case TOP_WINS_STAT:
+			orderBy = "wins desc";
+			break;
+		default:
+			break;
+		}
 
 		Cursor statCurs = 
-			getReadableDatabase().query(LeaderboardTable.TABLE_NAME, null, whereClause, whereArgs, 
-					null, null, LeaderboardTable.DEFAULT_SORT_ORDER);
-		
+			getReadableDatabase().query(StatsRollupTable.TABLE_NAME, null, whereClause, whereArgs, null, null, orderBy);
+
+
 		return statCurs;
 	}
 

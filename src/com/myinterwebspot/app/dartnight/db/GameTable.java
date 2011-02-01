@@ -33,6 +33,12 @@ public final class GameTable implements BaseColumns {
 	 * <P>Type: TEXT</P>
 	 */
 	public static final String STATE = "state";
+	
+	/**
+	 * Indicates that this was a rematch of the parent game
+	 * <P>Type: INTEGER</P>
+	 */
+	public static final String PARENT = "parent_game";
 
 	
 	/**
@@ -53,6 +59,7 @@ public final class GameTable implements BaseColumns {
 				+ GameTable._ID + " INTEGER PRIMARY KEY, "
 				+ GameTable.NAME + " TEXT, "
 				+ GameTable.STATE + " TEXT, "
+				+ GameTable.PARENT + " INTEGER, "
 				+ GameTable.CREATED_DATE + " INTEGER, "
 				+ GameTable.MODIFIED_DATE + " INTEGER);");
 	}

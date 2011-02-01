@@ -16,9 +16,6 @@ public class Leaderboard {
 		this.db = dbHelper;
 	}
 	
-	public static void recalculate(DBHelper db){
-		
-	}
 	
 	public List<Team> getTopScoreTeams(){		
 		return db.getLeadingTeams(ContestantStatType.TOP_SCORE_STAT, MAX_LEADERS);
@@ -33,15 +30,15 @@ public class Leaderboard {
 	}
 
 	public List<Player> getTopScorePlayers(){
-		return null;
+		return db.getLeadingPlayers(ContestantStatType.TOP_SCORE_STAT, MAX_LEADERS);
 	}
 
 	public List<Player> getAverageScorePlayers(){
-		return null;
+		return db.getLeadingPlayers(ContestantStatType.AVG_SCORE_STAT, MAX_LEADERS);
 	}
 	
 	public List<Player> getWinningPlayers(){
-		return null;
+		return db.getLeadingPlayers(ContestantStatType.TOP_WINS_STAT, MAX_LEADERS);
 	}
 
 }

@@ -9,6 +9,7 @@ public class Game {
 	private String id;
 	private String name;
 	private GameState state;
+	private Game parent;
 	private Date creationDate;
 	private Date modificationDate;
 	private List<Team> teams = new ArrayList<Team>();
@@ -35,6 +36,14 @@ public class Game {
 
 	public void setState(GameState state) {
 		this.state = state;
+	}
+
+	public void setParent(Game parent) {
+		this.parent = parent;
+	}
+
+	public Game getParent() {
+		return parent;
 	}
 
 	public Date getCreationDate() {
