@@ -120,6 +120,25 @@ public class DBHelper extends SQLiteOpenHelper {
 		saveGameTeams(game.getId(), game.getTeams());
 
 	}
+	
+	public void deleteGame(Game game){
+		
+		deleteGameStats(game);
+		
+		for (Team team : game.getTeams()) {			
+			recalculateContestantStats(team);
+			for(Player player:team.getPlayers()){				
+				recalculateContestantStats(player);
+			}			
+		}
+		
+		deleteGameTeams(game.getId());
+		deleteGame(game.getId());
+	}
+	
+	private void deleteGame(String gameId){
+		getWritableDatabase().delete(GameTable.TABLE_NAME, GameTable._ID + "=" + gameId, null);
+	}
 
 	public void saveTeam(Team team) {
 		ContentValues values = new ContentValues();
@@ -464,6 +483,16 @@ public class DBHelper extends SQLiteOpenHelper {
 		return stats;
 	}
 
+	
+	private Cursor getContestantStatsByHighScore(Contestant contestant) {
+		
+		String whereClause = GameStatsTable.CONTESTANT_ID + "= ? AND " +
+		GameStatsTable.CONTESTANT_TYPE + "= ?";
+		String[] whereArgs = new String[]{contestant.getId(), contestant.getClass().getName()};
+
+		return getReadableDatabase().query(GameStatsTable.TABLE_NAME, null, whereClause, whereArgs, null, null, GameStatsTable.SCORE + " desc");
+		
+	}
 
 
 	public void saveGameStats(GameStat gameStats) {
@@ -491,7 +520,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 		curs.close();
 
-		updateGameStats(gameStats);
+		recalculateContestantStats(gameStats.getContestant());
 
 	}
 
@@ -519,6 +548,15 @@ public class DBHelper extends SQLiteOpenHelper {
 		getWritableDatabase().update(GameStatsTable.TABLE_NAME, values, whereClause, whereArgs);
 
 	}
+	
+	private void deleteGameStats(Game game) {
+		String whereClause = GameStatsTable.GAME_ID + "= ?";
+
+		String[] whereArgs = new String[]{game.getId()};
+
+		getWritableDatabase().delete(GameStatsTable.TABLE_NAME, whereClause, whereArgs);
+
+	}
 
 	protected void loadContestantStats(Contestant contestant) {
 		contestant.setContestantStats(getContestantStats(contestant));		
@@ -532,8 +570,9 @@ public class DBHelper extends SQLiteOpenHelper {
 		Cursor statCurs = 
 			getReadableDatabase().query(StatsRollupTable.TABLE_NAME, null, whereClause, whereArgs, null, null, null);
 
-		ContestantStats stat = new ContestantStats();
+		ContestantStats stat = null;
 		if(statCurs.moveToFirst()){
+			stat = new ContestantStats();
 			stat.setHighScore(statCurs.getDouble(2));
 			stat.setAvgScore(statCurs.getDouble(3));
 			stat.setWins(statCurs.getInt(4));
@@ -545,31 +584,88 @@ public class DBHelper extends SQLiteOpenHelper {
 		return stat;
 
 	}
+	
+	private void recalculateContestantStats(Contestant contestant) {
+		
+		boolean insertStats = false;
+		
+		String query = "select max(a.score),avg(a.score),b.wins,c.losses from GameStats a, " +
+					   "(select count(*) wins from GameStats " + 
+					   "where contestant_id = ? " +
+					   "and type = ? "+
+					   "and winner_flag = '1') as b, " +
+					   "(select count(*) losses from GameStats " +
+					   "where contestant_id = ? " +
+					   "and type = ? " +
+					   "and winner_flag = '0') as c " +
+					   "where a.contestant_id = ? " + 
+					   "and a.type = ?";
+		
+		String contestantId = contestant.getId();
+		String contestantType = contestant.getClass().getName();
+		String[] params = new String[]{contestantId,contestantType,contestantId,contestantType,contestantId,contestantType};
+		
+		Cursor statCurs = 
+			getReadableDatabase().rawQuery(query, params);
+		
+		ContestantStats stats = getContestantStats(contestant);
+		if(stats == null){
+			stats = new ContestantStats();
+			insertStats = true;
+		} 
+		
+		if(statCurs.moveToFirst()){			
+			
+			ContentValues values = new ContentValues();
+			values.put(StatsRollupTable.HIGH_SCORE, statCurs.getDouble(0));
+			values.put(StatsRollupTable.AVG_SCORE, statCurs.getDouble(1));
+			values.put(StatsRollupTable.WINS, statCurs.getInt(2));
+			values.put(StatsRollupTable.LOSSES, statCurs.getInt(3));
+			
+			
+			if(insertStats){
+				insertContestantStats(contestant, values);
+			} else {
+				updateContestantStats(contestant, values);
+			}
+		} else {
+			Log.e("DBHelper", "Failed to recalculate contestant stats!");
+		}
+		
+		statCurs.close();
+		
+	}
 
-
-	private void updateGameStats(GameStat gameStats) {
-
-		boolean insert = false;
+	private void removeFromContestantStats(GameStat gameStats) {
 
 		ContestantStats stats = getContestantStats(gameStats.getContestant());
-		if(stats.getHighScore() == 0.0){
-			insert = true;
-		}
-
+		
 		if(gameStats.isWinner()){
-			stats.setWins(stats.getWins() + 1);
+			stats.setWins(stats.getWins() - 1);
 		} else {
-			stats.setLosses(stats.getLosses() + 1);
+			stats.setLosses(stats.getLosses() - 1);
 		}
 
-		if(gameStats.getScore() > stats.getHighScore()){
-			stats.setHighScore(gameStats.getScore());
+		if(gameStats.getScore() == stats.getHighScore()){
+			Cursor statsCurs = getContestantStatsByHighScore(gameStats.getContestant());
+			statsCurs.moveToFirst();
+			while(!statsCurs.isAfterLast()){
+				if(!statsCurs.getString(0).equals(gameStats.getGameId())){
+					stats.setHighScore(statsCurs.getDouble(3));
+					break;
+				}
+				statsCurs.moveToNext();
+			}
+		
+
+			statsCurs.close();
+			
 		}
 
 		double avgMpr = stats.getAvgScore();
 		int totalgames = stats.getWins() + stats.getLosses();
 
-		double newAvgMpr = (avgMpr + gameStats.getScore())/totalgames;
+		double newAvgMpr = (avgMpr - gameStats.getScore())/totalgames;
 		stats.setAvgScore(newAvgMpr);
 
 		ContentValues values = new ContentValues();
@@ -578,14 +674,11 @@ public class DBHelper extends SQLiteOpenHelper {
 		values.put(StatsRollupTable.WINS, stats.getWins());
 		values.put(StatsRollupTable.LOSSES, stats.getLosses());
 
-		if(insert){
-			insertContestantStats(gameStats.getContestant(), values);
-		} else {
-			updateContestantStats(gameStats.getContestant(), values);
-		}
+		updateContestantStats(gameStats.getContestant(), values);
 
 	}
-
+	
+	
 	private void insertContestantStats(Contestant contestant, ContentValues values) {
 
 		values.put(StatsRollupTable.ID, contestant.getId());

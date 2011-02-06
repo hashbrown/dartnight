@@ -183,7 +183,7 @@ public class GameActivity extends Activity{
 
 	
 	protected void saveGameResults(int winner, String[] scores) {
-
+		
 		for (int i = 0; i < this.game.getTeams().size(); i++){					
 			Team team = this.game.getTeams().get(i);
 			GameStat teamStat = new GameStat(team, this.game);
@@ -195,7 +195,7 @@ public class GameActivity extends Activity{
 			teamStat.setScore(Double.valueOf(scores[i]));
 
 			team.addGameStat(teamStat);
-			this.db.saveGameStats(teamStat);
+			new SaveGameStatTask().execute(teamStat);
 
 			Set<Player> winningPlayers = team.getPlayers();
 			for (Player player : winningPlayers) {
@@ -204,7 +204,7 @@ public class GameActivity extends Activity{
 					playerStat.setWinner(true);
 				}
 				playerStat.setScore(Double.valueOf(scores[i]));
-				this.db.saveGameStats(playerStat);
+				new SaveGameStatTask().execute(playerStat);
 			}		
 		}
 		
@@ -398,6 +398,16 @@ public class GameActivity extends Activity{
 		@Override
 		protected Void doInBackground(Game... params) {
 			db.saveGame(params[0]);
+			return null;
+		}
+		
+	}
+	
+	class SaveGameStatTask extends AsyncTask<GameStat,Void,Void>{
+
+		@Override
+		protected Void doInBackground(GameStat... params) {
+			db.saveGameStats(params[0]);
 			return null;
 		}
 		
