@@ -1,5 +1,6 @@
 package com.myinterwebspot.app.dartnight;
 
+import java.text.NumberFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -231,12 +232,17 @@ public class LeaderboardAdapter extends BaseExpandableListAdapter {
 	
 	private List<LeaderboardItem> getTeamHighAverageScores(List<Team> teams) {
 		List<LeaderboardItem> leaders = new ArrayList<LeaderboardItem>();
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(2);
+		nf.setMinimumFractionDigits(2);
+		
 		int rank = 1;
 		for (Team team : teams) {
 			LeaderboardItem item = new LeaderboardItem();
+			
 			item.rank = rank;
 			item.name = team.getName();
-			item.score = String.valueOf(team.getContestantStats().getAvgScore());
+			item.score = nf.format(team.getContestantStats().getAvgScore());
 			leaders.add(item);
 			rank++;
 		}
@@ -276,12 +282,16 @@ public class LeaderboardAdapter extends BaseExpandableListAdapter {
 	
 	private List<LeaderboardItem> getPlayerHighAverageScores(List<Player> players) {
 		List<LeaderboardItem> leaders = new ArrayList<LeaderboardItem>();
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(2);
+		nf.setMinimumFractionDigits(2);
+		
 		int rank = 1;
 		for (Player player : players) {
 			LeaderboardItem item = new LeaderboardItem();
 			item.rank = rank;
 			item.name = player.getNickName();
-			item.score = String.valueOf(player.getContestantStats().getAvgScore());
+			item.score = nf.format(player.getContestantStats().getAvgScore());
 			leaders.add(item);
 			rank++;
 		}
