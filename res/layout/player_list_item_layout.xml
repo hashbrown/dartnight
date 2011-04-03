@@ -7,7 +7,8 @@
 		android:id="@+id/player_name"
 		android:layout_width="wrap_content"
 		android:layout_height="wrap_content"
-		android:textSize="20dip" 
+		android:textSize="15dip" 
+		android:typeface="serif"
 		android:background="@drawable/player_list_background"/>
        
 </LinearLayout>

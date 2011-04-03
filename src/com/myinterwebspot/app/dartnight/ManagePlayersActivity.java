@@ -72,7 +72,6 @@ public class ManagePlayersActivity extends ListActivity {
 
 		selectPlayersBtn = (Button)findViewById(R.id.select_players_button);
 		if(intentAction.equals(Intent.ACTION_PICK)){
-			itemView = android.R.layout.simple_list_item_multiple_choice;
 			selectPlayersBtn.setOnClickListener(new OnClickListener() {
 
 				public void onClick(View v) {
@@ -90,6 +89,8 @@ public class ManagePlayersActivity extends ListActivity {
 		} else {
 			selectPlayersBtn.setVisibility(View.GONE);		
 		}
+		
+		
 
 	}
 	

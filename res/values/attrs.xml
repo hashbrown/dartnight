@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+	<!-- View styles -->
+	<attr name="TabOnStyle" format="reference" />
+	<attr name="TabOffStyle" format="reference" />
+	<attr name="TextViewStyleList" format="reference" />
+	<attr name="TextViewStyleTab" format="reference" />
+	<attr name="ListViewStyle" format="reference" />
+	<attr name="DetailHeader" format="reference" />
+	<attr name="DetailItem" format="reference" />
+
+</resources>

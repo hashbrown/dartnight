@@ -15,7 +15,8 @@
 		android:id="@android:id/android:list"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent"
-		android:layout_above="@id/select_players_button"/>
+		android:layout_above="@id/select_players_button"
+		style="?ListViewStyle"/>
 		
     
     <TextView

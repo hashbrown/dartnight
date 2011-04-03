@@ -84,7 +84,7 @@ public class GameViewAdapter extends BaseAdapter {
         	holder = (ViewHolder)view.getTag();
         }
         
-        holder.bkgrd.setAlpha(90);
+        holder.bkgrd.setAlpha(150);
         
         Spannable str = new SpannableString("Team " + (position + 1));
         str.setSpan(new UnderlineSpan(), 0, str.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);

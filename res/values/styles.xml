@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+<style name="DetailHeader_default">
+	<item name="android:textSize">40dip</item>
+    <item name="android:textStyle">bold</item>
+    <item name="android:textColor">@color/solid_red</item>
+</style>
+<style name="DetailItem_default">
+    <item name="android:textSize">20dip</item>
+    <item name="android:textColor">@color/alt_creme_light</item>
+</style>
+<style name="app_background_default">
+	<item name="android:windowBackground">@color/base_creme_light</item>
+</style>
+<style name="TextViewStyleTab_default">
+    <item name="android:textSize">12dip</item>
+    <item name="android:textColor">@drawable/tab_text_selector</item>
+</style> 
+<style name="TextViewStyleList_default">
+    <item name="android:textSize">22dip</item>
+    <item name="android:textColor">@color/base_grey_dark</item>
+</style>
+<style name="ListViewStyle_default">
+	<item name="android:divider">@color/base_creme_dark</item>
+    <item name="android:cacheColorHint">@color/base_creme_dark</item>
+    <item name="android:dividerHeight">2dp</item>
+</style> 
+<style name="TabOnStyle_default">
+	<item name="android:startColor">@color/base_red_light</item>
+    <item name="android:endColor">@color/base_red_dark</item>
+    <item name="android:angle">270</item>
+</style> 
+<style name="TabOffStyle_default">
+	<item name="android:startColor">@color/base_creme_light</item>
+    <item name="android:endColor">@color/base_creme_dark</item>
+    <item name="android:angle">270</item>
+</style>   
+</resources>

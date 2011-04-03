@@ -4,10 +4,11 @@
       android:versionCode="1"
       android:versionName="1.0">
     <application android:icon="@drawable/dartboard_icon" android:label="@string/app_name"
-    			 android:debuggable="true" >
+    			 android:debuggable="true"
+    			 android:theme="@style/defaultTheme" >
         <activity android:name=".HomeActivity"
                   android:label="@string/app_name"
-                  android:theme="@android:style/Theme.NoTitleBar">
+                  android:theme="@style/defaultTabTheme">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -19,6 +20,7 @@
 		<activity android:name=".EditPlayerActivity"/>
 		<activity android:name=".LeaderboardActivity"/>
     </application>
-
+	<uses-sdk android:minSdkVersion="4" 
+              android:targetSdkVersion="7" />
 
 </manifest> 

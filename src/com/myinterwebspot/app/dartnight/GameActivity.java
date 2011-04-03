@@ -305,7 +305,7 @@ public class GameActivity extends Activity{
 		
 		Game rematch = generateRematchGame(game);
 		this.game = rematch;
-		this.gameAdapter = new GameViewAdapter(getApplicationContext(), rematch);
+		this.gameAdapter = new GameViewAdapter(this, rematch);
 		this.viewholder.gridview.setAdapter(this.gameAdapter);
 		refreshView();
 
@@ -387,7 +387,7 @@ public class GameActivity extends Activity{
 
 		@Override
 		protected void onPostExecute(Game result) {
-			gameAdapter = new GameViewAdapter(getApplicationContext(), game);
+			gameAdapter = new GameViewAdapter(GameActivity.this, game);
 			initViews(game);
 			loadToast.cancel();
 		}		

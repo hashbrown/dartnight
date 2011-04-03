@@ -8,7 +8,9 @@
     <TextView android:text="@string/label_player_first_name" 
     		  android:id="@+id/LabelFirstName" 
     		  android:layout_width="wrap_content" 
-    		  android:layout_height="wrap_content">
+    		  android:layout_height="wrap_content"
+    		  android:textSize="18dip" 
+			  android:typeface="sans">
     </TextView>
     <EditText android:text="@string/player_first_name" 
               android:id="@+id/EditTextFirstName"
@@ -19,7 +21,9 @@
     <TextView android:text="@string/label_player_last_name" 
     		  android:id="@+id/LabelFirstName" 
     		  android:layout_width="wrap_content" 
-    		  android:layout_height="wrap_content">
+    		  android:layout_height="wrap_content"
+    		  android:textSize="18dip" 
+			  android:typeface="sans">
     </TextView>
     <EditText android:text="@string/player_last_name" 
     		  android:id="@+id/EditTextLastName"
@@ -30,7 +34,9 @@
     <TextView android:text="@string/label_player_nick_name" 
     		  android:id="@+id/LabelShortName" 
     		  android:layout_width="wrap_content" 
-    		  android:layout_height="wrap_content">
+    		  android:layout_height="wrap_content"
+    		  android:textSize="18dip" 
+			  android:typeface="sans">
     </TextView>
     <EditText android:text="@string/player_nick_name" 
               android:id="@+id/EditTextShortName"

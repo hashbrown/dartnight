@@ -48,8 +48,8 @@ public class GameListActivity extends ListActivity {
      	Cursor games = db.getGames();
 		startManagingCursor(games);
         
-        this.adapter = new SimpleCursorAdapter(this, android.R.layout.simple_list_item_1, games,
-				new String[] { GameTable.NAME }, new int[] { android.R.id.text1});
+        this.adapter = new SimpleCursorAdapter(this, R.layout.game_list_item, games,
+				new String[] { GameTable.NAME }, new int[] { R.id.text1});
 				
 		setListAdapter(this.adapter);
 
@@ -170,10 +170,7 @@ public class GameListActivity extends ListActivity {
         .create();
     }
     
-    
-    
-   
-	
+    	
 	class DeleteGameTask extends AsyncTask<String,Void,Void>{
 
 		@Override
@@ -186,10 +183,6 @@ public class GameListActivity extends ListActivity {
 		@Override
 		protected void onPostExecute(Void result) {
 			adapter.getCursor().requery();
-		}
-		
-		
-		
+		}		
 	}
-
 }
