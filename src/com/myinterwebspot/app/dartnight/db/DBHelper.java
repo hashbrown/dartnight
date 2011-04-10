@@ -1,5 +1,9 @@
 package com.myinterwebspot.app.dartnight.db;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileOutputStream;
+import java.nio.channels.FileChannel;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -14,6 +18,7 @@ import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.os.Environment;
 import android.util.Log;
 
 import com.myinterwebspot.app.dartnight.model.Contestant;
@@ -30,7 +35,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "DartsDB";
 	private static final int DATABASE_VERSION = 2;
-
+	
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
@@ -49,12 +54,54 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	@Override
 	public void onUpgrade(SQLiteDatabase db, int oldVersion, int newVersion) {
-		Log.w("LOG", "Upgrading database from version " + oldVersion + " to " +
-				newVersion + ", which will destroy all old data");
 
+		backupDB(db, oldVersion);
 		UpgradeStrategyFactory factory = new UpgradeStrategyFactory();
 		DBUpgradeStrategy upgradeStrategy = factory.getUpgradeStrategy(oldVersion, newVersion);
 		upgradeStrategy.upgrade(db);
+	}
+
+	private void backupDB(SQLiteDatabase db, int version) {
+		try {
+			String currentDBPath = db.getPath();
+			File sd = Environment.getExternalStorageDirectory();
+
+			if (sd.canWrite()) {
+
+
+				String backupDBPath = "com.myinterwebspot.app.dartnight";
+				String backupFileName = "dartnight_backup_v" + version + ".db";
+
+				File currentDB = new File(currentDBPath);
+
+				File backupDB = new File(sd,backupDBPath);
+
+				if (currentDB.exists()) {
+					
+					if(!backupDB.exists()){
+						backupDB.mkdirs();
+					}
+					
+					File backupDBFile = new File(backupDB,backupFileName);
+
+					FileChannel src = new FileInputStream(currentDB).getChannel();
+
+					FileChannel dst = new FileOutputStream(backupDBFile).getChannel();
+
+					dst.transferFrom(src, 0, src.size());
+
+					src.close();
+
+					dst.close();
+
+				}
+			}
+
+		} catch (Exception e) {
+			Log.e("DBHelper","error backing up database file", e);
+		}
+
+
 	}
 
 	public Cursor getGames(){
@@ -79,13 +126,13 @@ public class DBHelper extends SQLiteOpenHelper {
 			game.setState(GameState.valueOf(gameCurs.getString(gameCurs.getColumnIndex(GameTable.STATE))));
 			game.setCreationDate(new Date(gameCurs.getLong(gameCurs.getColumnIndex(GameTable.CREATED_DATE))));
 			game.setModificationDate(new Date(gameCurs.getLong(gameCurs.getColumnIndex(GameTable.MODIFIED_DATE))));
-			
+
 			String parentId = gameCurs.getString(gameCurs.getColumnIndex(GameTable.PARENT));
 			if(parentId != null){
 				Game parent = getGame(parentId);
 				game.setParent(parent);
 			}
-			
+
 			loadTeams(game);
 		}
 
@@ -99,7 +146,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		values.put(GameTable.STATE, game.getState().toString());
 		Long now = Long.valueOf(System.currentTimeMillis());
 		values.put(GameTable.MODIFIED_DATE, now);
-		
+
 		if(game.getParent() != null){
 			values.put(GameTable.PARENT, game.getParent().getId());
 		}
@@ -120,22 +167,22 @@ public class DBHelper extends SQLiteOpenHelper {
 		saveGameTeams(game.getId(), game.getTeams());
 
 	}
-	
+
 	public void deleteGame(Game game){
-		
+
 		deleteGameStats(game);
-		
+
 		for (Team team : game.getTeams()) {			
 			recalculateContestantStats(team);
 			for(Player player:team.getPlayers()){				
 				recalculateContestantStats(player);
 			}			
 		}
-		
+
 		deleteGameTeams(game.getId());
 		deleteGame(game.getId());
 	}
-	
+
 	private void deleteGame(String gameId){
 		getWritableDatabase().delete(GameTable.TABLE_NAME, GameTable._ID + "=" + gameId, null);
 	}
@@ -396,7 +443,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 		Cursor teamCurs = 
 			getReadableDatabase().query(TeamTable.TABLE_NAME, new String[]{TeamTable._ID}, TeamTable._ID + "= ?", new String[]{teamId}, null, null, null);
-		
+
 		boolean exists = teamCurs.moveToFirst();
 		teamCurs.close();
 
@@ -483,15 +530,15 @@ public class DBHelper extends SQLiteOpenHelper {
 		return stats;
 	}
 
-	
+
 	private Cursor getContestantStatsByHighScore(Contestant contestant) {
-		
+
 		String whereClause = GameStatsTable.CONTESTANT_ID + "= ? AND " +
 		GameStatsTable.CONTESTANT_TYPE + "= ?";
 		String[] whereArgs = new String[]{contestant.getId(), contestant.getClass().getName()};
 
 		return getReadableDatabase().query(GameStatsTable.TABLE_NAME, null, whereClause, whereArgs, null, null, GameStatsTable.SCORE + " desc");
-		
+
 	}
 
 
@@ -548,7 +595,7 @@ public class DBHelper extends SQLiteOpenHelper {
 		getWritableDatabase().update(GameStatsTable.TABLE_NAME, values, whereClause, whereArgs);
 
 	}
-	
+
 	private void deleteGameStats(Game game) {
 		String whereClause = GameStatsTable.GAME_ID + "= ?";
 
@@ -584,45 +631,45 @@ public class DBHelper extends SQLiteOpenHelper {
 		return stat;
 
 	}
-	
+
 	private void recalculateContestantStats(Contestant contestant) {
-		
+
 		boolean insertStats = false;
-		
+
 		String query = "select max(a.score),avg(a.score),b.wins,c.losses from GameStats a, " +
-					   "(select count(*) wins from GameStats " + 
-					   "where contestant_id = ? " +
-					   "and type = ? "+
-					   "and winner_flag = '1') as b, " +
-					   "(select count(*) losses from GameStats " +
-					   "where contestant_id = ? " +
-					   "and type = ? " +
-					   "and winner_flag = '0') as c " +
-					   "where a.contestant_id = ? " + 
-					   "and a.type = ?";
-		
+		"(select count(*) wins from GameStats " + 
+		"where contestant_id = ? " +
+		"and type = ? "+
+		"and winner_flag = '1') as b, " +
+		"(select count(*) losses from GameStats " +
+		"where contestant_id = ? " +
+		"and type = ? " +
+		"and winner_flag = '0') as c " +
+		"where a.contestant_id = ? " + 
+		"and a.type = ?";
+
 		String contestantId = contestant.getId();
 		String contestantType = contestant.getClass().getName();
 		String[] params = new String[]{contestantId,contestantType,contestantId,contestantType,contestantId,contestantType};
-		
+
 		Cursor statCurs = 
 			getReadableDatabase().rawQuery(query, params);
-		
+
 		ContestantStats stats = getContestantStats(contestant);
 		if(stats == null){
 			stats = new ContestantStats();
 			insertStats = true;
 		} 
-		
+
 		if(statCurs.moveToFirst()){			
-			
+
 			ContentValues values = new ContentValues();
 			values.put(StatsRollupTable.HIGH_SCORE, statCurs.getDouble(0));
 			values.put(StatsRollupTable.AVG_SCORE, statCurs.getDouble(1));
 			values.put(StatsRollupTable.WINS, statCurs.getInt(2));
 			values.put(StatsRollupTable.LOSSES, statCurs.getInt(3));
-			
-			
+
+
 			if(insertStats){
 				insertContestantStats(contestant, values);
 			} else {
@@ -631,15 +678,15 @@ public class DBHelper extends SQLiteOpenHelper {
 		} else {
 			Log.e("DBHelper", "Failed to recalculate contestant stats!");
 		}
-		
+
 		statCurs.close();
-		
+
 	}
 
 	private void removeFromContestantStats(GameStat gameStats) {
 
 		ContestantStats stats = getContestantStats(gameStats.getContestant());
-		
+
 		if(gameStats.isWinner()){
 			stats.setWins(stats.getWins() - 1);
 		} else {
@@ -656,10 +703,10 @@ public class DBHelper extends SQLiteOpenHelper {
 				}
 				statsCurs.moveToNext();
 			}
-		
+
 
 			statsCurs.close();
-			
+
 		}
 
 		double avgMpr = stats.getAvgScore();
@@ -677,8 +724,8 @@ public class DBHelper extends SQLiteOpenHelper {
 		updateContestantStats(gameStats.getContestant(), values);
 
 	}
-	
-	
+
+
 	private void insertContestantStats(Contestant contestant, ContentValues values) {
 
 		values.put(StatsRollupTable.ID, contestant.getId());
