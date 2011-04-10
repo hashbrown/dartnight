@@ -39,6 +39,12 @@ public class GameListActivity extends ListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        try {
+			throw new Exception();
+		} catch (Exception e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
         setContentView(R.layout.game_list_layout);
         
         db = new DBHelper(getApplicationContext());

@@ -22,6 +22,7 @@ public class LeaderboardActivity extends ExpandableListActivity {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        setContentView(R.layout.leaderboard_layout);
         
         db = new DBHelper(this);
         mAdapter = new LeaderboardAdapter(this,new Leaderboard(db));

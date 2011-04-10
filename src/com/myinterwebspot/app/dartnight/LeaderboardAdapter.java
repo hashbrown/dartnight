@@ -6,6 +6,7 @@ import java.util.Arrays;
 import java.util.List;
 
 import android.content.Context;
+import android.content.res.Resources;
 import android.os.AsyncTask;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -63,10 +64,25 @@ public class LeaderboardAdapter extends BaseExpandableListAdapter {
         	holder = (ViewHolder)view.getTag();
         }
         
+        Resources res = ctx.getResources();
+        
+        int bgColor = res.getColor(R.color.base_grey_dark);
+    	int textColor = res.getColor(R.color.base_creme_dark);
+        
+    	if(childPosition % 2 == 0){
+        	bgColor = res.getColor(R.color.base_creme_dark);
+        	textColor = res.getColor(R.color.base_grey_dark);
+        }
+    	
+        view.setBackgroundColor(bgColor);
+        
         LeaderboardItem leader = (LeaderboardItem)getChild(groupPosition,childPosition);
         holder.leaderRank.setText(String.valueOf(leader.rank));
+        holder.leaderRank.setTextColor(textColor);
         holder.leaderName.setText(leader.name);
+        holder.leaderName.setTextColor(textColor);
         holder.leaderScore.setText(leader.score);
+        holder.leaderScore.setTextColor(textColor);
         
         return view;
 	}

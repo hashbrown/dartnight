@@ -1,64 +1,63 @@
 <?xml version="1.0" encoding="utf-8"?>
-<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
-    android:padding="5dip">
+<RelativeLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="fill_parent"
+	android:layout_height="fill_parent">
+	<LinearLayout
+		android:id="@+id/MainLayout"
+		android:layout_width="fill_parent"
+		android:layout_height="fill_parent"
+		android:padding="5dip"
+		android:orientation="vertical"
+		android:background="@drawable/team_backgrnd_shape">
 
-    <TextView android:id="@+id/GameTeam" 
-    		  style="@style/DetailHeader_default"
-    		  android:orientation="vertical"
-    		  android:layout_width="fill_parent" 
-    		  android:layout_height="wrap_content"
-    		  android:gravity="center"
-    		  android:layout_alignParentTop="true"
-    		  android:layout_centerHorizontal="true">
-    </TextView>
-    <ImageView android:id="@+id/background"
-    		   android:layout_width="fill_parent"
-    		   android:layout_height="fill_parent"
-               android:adjustViewBounds="true"
-               android:scaleType="fitStart"
-               android:layout_centerHorizontal="true"
-               android:layout_below="@id/GameTeam"
-               android:src="@drawable/dartboard_blank_sm">
-    </ImageView>
-    <TextView android:id="@+id/GamePlayer1" 
-    		  android:layout_width="wrap_content" 
-    		  android:layout_height="wrap_content"
-    		  android:layout_below="@id/GameTeam"
-    		  style="@style/DetailItem_default">
-    </TextView>
-    <TextView android:id="@+id/GamePlayer2" 
-    		  android:layout_width="wrap_content" 
-    		  android:layout_height="wrap_content"
-    		  android:layout_below="@id/GamePlayer1"
-    		  style="?DetailItem">
-    </TextView>
-    <TextView android:id="@+id/GamePlayer3" 
-    		  android:layout_width="wrap_content" 
-    		  android:layout_height="wrap_content"
-    		  android:layout_below="@id/GamePlayer2"
-    		  style="?DetailItem">
-    </TextView>
-    <TextView android:id="@+id/GamePlayer4" 
-    		  android:layout_width="wrap_content"
-    		  android:layout_height="wrap_content"
-    		  android:layout_below="@id/GamePlayer3"
-    		  style="?DetailItem">
-    </TextView>
-    <TextView android:id="@+id/TeamScore" 
-    		  android:layout_width="fill_parent"
-    		  android:layout_height="wrap_content"
-    		  android:gravity="center"
-    		  android:layout_below="@id/GamePlayer4"
-    		  style="?DetailHeader">
-    </TextView>
-    <TextView android:id="@+id/Winner" 
-    		  android:text="@string/winner"
-    		  android:layout_width="fill_parent"
-    		  android:layout_height="wrap_content"
-    		  android:gravity="center"
-    		  android:layout_below="@id/TeamScore"
-    		  style="?DetailHeader">
-    </TextView>
+		<TextView
+			android:id="@+id/GameTeam"
+			style="@style/DetailHeader_default"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center">
+		</TextView>
+		<TextView
+			android:id="@+id/GamePlayer1"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			style="@style/DetailItem_default">
+		</TextView>
+		<TextView
+			android:id="@+id/GamePlayer2"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			style="?DetailItem">
+		</TextView>
+		<TextView
+			android:id="@+id/GamePlayer3"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			style="?DetailItem">
+		</TextView>
+		<TextView
+			android:id="@+id/GamePlayer4"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			style="?DetailItem">
+		</TextView>
+		<TextView
+			android:id="@+id/TeamScore"
+			android:layout_width="fill_parent"
+			android:layout_height="wrap_content"
+			android:gravity="center"
+			style="?DetailHeader">
+		</TextView>
+	</LinearLayout>
+	<ImageView
+		android:id="@+id/Winner"
+		android:layout_width="wrap_content"
+		android:layout_height="wrap_content"
+		android:src="@drawable/red_dart"
+		android:layout_alignParentRight="true"
+		android:layout_alignBottom="@id/MainLayout">
+	</ImageView>
 </RelativeLayout>
+
+    

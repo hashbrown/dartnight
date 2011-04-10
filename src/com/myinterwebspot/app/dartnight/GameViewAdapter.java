@@ -70,21 +70,21 @@ public class GameViewAdapter extends BaseAdapter {
             LayoutInflater vi = (LayoutInflater) this.ctx.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
             view = vi.inflate(R.layout.team_layout, parent, false);
             holder = new ViewHolder();
-            holder.bkgrd = (ImageView) view.findViewById(R.id.background);
+            //holder.bkgrd = (ImageView) view.findViewById(R.id.background);
             holder.teamLabel = (TextView) view.findViewById(R.id.GameTeam);
             holder.team1 = (TextView)view.findViewById(R.id.GamePlayer1);
             holder.team2 = (TextView)view.findViewById(R.id.GamePlayer2);
             holder.team3 = (TextView)view.findViewById(R.id.GamePlayer3);
             holder.team4 = (TextView)view.findViewById(R.id.GamePlayer4);
             holder.score = (TextView)view.findViewById(R.id.TeamScore);
-            holder.winner = (TextView)view.findViewById(R.id.Winner);
+            holder.winner = (ImageView)view.findViewById(R.id.Winner);
             
             view.setTag(holder);
         } else {
         	holder = (ViewHolder)view.getTag();
         }
         
-        holder.bkgrd.setAlpha(150);
+        //holder.bkgrd.setAlpha(150);
         
         Spannable str = new SpannableString("Team " + (position + 1));
         str.setSpan(new UnderlineSpan(), 0, str.length(), Spannable.SPAN_INCLUSIVE_INCLUSIVE);
@@ -135,14 +135,14 @@ public class GameViewAdapter extends BaseAdapter {
 	}
 	
 	static class ViewHolder {
-		ImageView bkgrd;
+		//ImageView bkgrd;
 		TextView teamLabel;
 		TextView team1;
 		TextView team2;
 		TextView team3;
 		TextView team4;
 		TextView score;
-		TextView winner;
+		ImageView winner;
 	}
 
 }

@@ -62,30 +62,31 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int tan=0x7f040004;
     }
     public static final class drawable {
-        public static final int blue=0x7f020011;
+        public static final int blue=0x7f020012;
         public static final int dartboard=0x7f020000;
         public static final int dartboard_blank=0x7f020001;
         public static final int dartboard_blank_sm=0x7f020002;
         public static final int dartboard_icon=0x7f020003;
-        public static final int green=0x7f020012;
+        public static final int green=0x7f020013;
         public static final int icon=0x7f020004;
         public static final int player_list_background=0x7f020005;
-        public static final int red=0x7f020010;
-        public static final int screen_background_black=0x7f020015;
-        public static final int tab_divider=0x7f020006;
-        public static final int tab_players_off=0x7f020007;
-        public static final int tab_players_on=0x7f020008;
-        public static final int tab_selector=0x7f020009;
-        public static final int tab_shape_off=0x7f02000a;
-        public static final int tab_shape_on=0x7f02000b;
-        public static final int tab_strip=0x7f02000c;
-        public static final int tab_text_selector=0x7f02000d;
-        public static final int team_backgrnd_shape=0x7f02000e;
-        public static final int team_background=0x7f02000f;
-        public static final int translucent_background=0x7f020016;
-        public static final int transparent_background=0x7f020017;
-        public static final int white=0x7f020014;
-        public static final int yellow=0x7f020013;
+        public static final int red=0x7f020011;
+        public static final int red_dart=0x7f020006;
+        public static final int screen_background_black=0x7f020016;
+        public static final int tab_divider=0x7f020007;
+        public static final int tab_players_off=0x7f020008;
+        public static final int tab_players_on=0x7f020009;
+        public static final int tab_selector=0x7f02000a;
+        public static final int tab_shape_off=0x7f02000b;
+        public static final int tab_shape_on=0x7f02000c;
+        public static final int tab_strip=0x7f02000d;
+        public static final int tab_text_selector=0x7f02000e;
+        public static final int team_backgrnd_shape=0x7f02000f;
+        public static final int team_background=0x7f020010;
+        public static final int translucent_background=0x7f020017;
+        public static final int transparent_background=0x7f020018;
+        public static final int white=0x7f020015;
+        public static final int yellow=0x7f020014;
     }
     public static final class id {
         public static final int EditTextFirstName=0x7f070001;
@@ -95,14 +96,14 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int GamePlayer2=0x7f070020;
         public static final int GamePlayer3=0x7f070021;
         public static final int GamePlayer4=0x7f070022;
-        public static final int GameTeam=0x7f07001d;
+        public static final int GameTeam=0x7f07001e;
         public static final int GameView=0x7f070007;
         public static final int LabelFirstName=0x7f070000;
         public static final int LabelShortName=0x7f070003;
+        public static final int MainLayout=0x7f07001d;
         public static final int TeamScore=0x7f070023;
         public static final int Winner=0x7f070024;
         public static final int action_button=0x7f070006;
-        public static final int background=0x7f07001e;
         public static final int ivIcon=0x7f070019;
         public static final int label_team1=0x7f07000a;
         public static final int label_team2=0x7f07000d;
@@ -133,11 +134,12 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int game_list_layout=0x7f030003;
         public static final int game_results_layout=0x7f030004;
         public static final int leaderboard_item=0x7f030005;
-        public static final int main=0x7f030006;
-        public static final int main_tab_layout=0x7f030007;
-        public static final int player_list_item_layout=0x7f030008;
-        public static final int player_list_layout=0x7f030009;
-        public static final int team_layout=0x7f03000a;
+        public static final int leaderboard_layout=0x7f030006;
+        public static final int main=0x7f030007;
+        public static final int main_tab_layout=0x7f030008;
+        public static final int player_list_item_layout=0x7f030009;
+        public static final int player_list_layout=0x7f03000a;
+        public static final int team_layout=0x7f03000b;
     }
     public static final class string {
         public static final int app_name=0x7f050001;
@@ -157,6 +159,9 @@ or to a theme attribute in the form "<code>?[<i>package</i>:][<i>type</i>:]<i>na
         public static final int label_team_2=0x7f050015;
         public static final int label_team_3=0x7f050016;
         public static final int label_team_4=0x7f050017;
+        /**   LEADERBOARD 
+         */
+        public static final int leaderboard_empty=0x7f05001d;
         public static final int manage_players=0x7f050003;
         /**  PLAYER MENU 
          */

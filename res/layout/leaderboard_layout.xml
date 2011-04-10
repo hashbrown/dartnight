@@ -5,7 +5,7 @@
 	android:layout_height="wrap_content"
 	>
 	
-	<ListView
+	<ExpandableListView
 		android:id="@android:id/android:list"
 		android:layout_width="fill_parent"
 		android:layout_height="fill_parent" 
@@ -16,6 +16,6 @@
      android:id="@+id/android:empty"
      android:layout_width="fill_parent"
      android:layout_height="fill_parent"
-     android:text="@string/leaderboard_empty"/>
+     android:text="@string/create_new_game"/>
 		
 </LinearLayout>

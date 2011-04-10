@@ -35,4 +35,6 @@
     <string name="winner">WINNER!</string>
     <!-- GAME RESULTS DIALOG -->
     <string name="save_results">Save Results</string>
+    <!--  LEADERBOARD -->
+    <string name="leaderboard_empty">No games have been completed.</string>
 </resources>

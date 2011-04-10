@@ -1,13 +1,13 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 <style name="DetailHeader_default">
-	<item name="android:textSize">40dip</item>
+	<item name="android:textSize">20dip</item>
     <item name="android:textStyle">bold</item>
-    <item name="android:textColor">@color/solid_red</item>
+    <item name="android:textColor">@color/base_creme_light</item>
 </style>
 <style name="DetailItem_default">
-    <item name="android:textSize">20dip</item>
-    <item name="android:textColor">@color/alt_creme_light</item>
+    <item name="android:textSize">16dip</item>
+    <item name="android:textColor">@color/base_creme_light</item>
 </style>
 <style name="app_background_default">
 	<item name="android:windowBackground">@color/base_creme_light</item>
@@ -34,5 +34,6 @@
 	<item name="android:startColor">@color/base_creme_light</item>
     <item name="android:endColor">@color/base_creme_dark</item>
     <item name="android:angle">270</item>
-</style>   
+</style>  
+ 
 </resources>

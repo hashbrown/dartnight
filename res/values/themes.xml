@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 	<style name="defaultTheme" parent="android:Theme">
-		<item name="android:windowBackground">@color/base_creme_light</item>
+		<item name="android:windowBackground">@color/base_creme_dark</item>
 		<item name="TextViewStyleList">@style/TextViewStyleList_default</item>
 		<item name="android:textAppearanceLarge">@style/TextViewStyleList_default</item>
 		<item name="ListViewStyle">@style/ListViewStyle_default</item>
@@ -12,9 +12,11 @@
 		<item name="android:windowBackground">@color/base_creme_light</item>
 		<item name="android:textAppearanceLarge">@style/TextViewStyleList_default</item>
 		<item name="TextViewStyleTab">@style/TextViewStyleTab_default</item>
+		<item name="ListViewStyle">@style/ListViewStyle_default</item>
 		<item name="TabOnStyle">@style/TabOnStyle_default</item>
 		<item name="TabOffStyle">@style/TabOffStyle_default</item>
 		<item name="DetailHeader">@style/DetailHeader_default</item>
 		<item name="DetailItem">@style/DetailItem_default</item>
 	</style>
+	
 </resources>

@@ -9,5 +9,4 @@
 	<attr name="ListViewStyle" format="reference" />
 	<attr name="DetailHeader" format="reference" />
 	<attr name="DetailItem" format="reference" />
-
 </resources>
