@@ -8,6 +8,7 @@ public class ContestantStats{
 	private int losses = 0;
 	private double highScore = 0.0;
 	private double avgScore = 0.0;
+	private double totalScore = 0.0;
 	
 	public int getWins() {
 		return wins;
@@ -32,6 +33,12 @@ public class ContestantStats{
 	}
 	public void setAvgScore(double avgScore) {
 		this.avgScore = avgScore;
+	}
+	public double getTotalScore() {
+		return totalScore;
+	}
+	public void setTotalScore(double totalScore) {
+		this.totalScore = totalScore;
 	}
 	
 }

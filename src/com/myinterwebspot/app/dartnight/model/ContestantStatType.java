@@ -1,7 +1,8 @@
 package com.myinterwebspot.app.dartnight.model;
 
 public enum ContestantStatType {
-	TOP_SCORE_STAT, 
+	HIGH_SCORE_STAT, 
 	AVG_SCORE_STAT, 
+	TOTAL_SCORE_STAT,
 	TOP_WINS_STAT
 }

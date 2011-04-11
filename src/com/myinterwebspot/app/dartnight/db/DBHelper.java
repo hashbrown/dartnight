@@ -34,12 +34,13 @@ import com.myinterwebspot.app.dartnight.model.Team;
 public class DBHelper extends SQLiteOpenHelper {
 
 	private static final String DATABASE_NAME = "DartsDB";
-	private static final int DATABASE_VERSION = 2;
+	private static final int DATABASE_VERSION = 3;
 	
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
 	}
-
+	
+	
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		GameTable.create(db);
@@ -71,18 +72,19 @@ public class DBHelper extends SQLiteOpenHelper {
 
 				String backupDBPath = "com.myinterwebspot.app.dartnight";
 				String backupFileName = "dartnight_backup_v" + version + ".db";
+				String previousBackupFileName = "dartnight_backup_v" + (version -1) + ".db";
 
 				File currentDB = new File(currentDBPath);
-
-				File backupDB = new File(sd,backupDBPath);
+				File currentBackupDB = new File(sd,previousBackupFileName);
+				File newBackupDB = new File(sd,backupDBPath);
 
 				if (currentDB.exists()) {
 					
-					if(!backupDB.exists()){
-						backupDB.mkdirs();
+					if(!newBackupDB.exists()){
+						newBackupDB.mkdirs();
 					}
 					
-					File backupDBFile = new File(backupDB,backupFileName);
+					File backupDBFile = new File(newBackupDB,backupFileName);
 
 					FileChannel src = new FileInputStream(currentDB).getChannel();
 
@@ -93,6 +95,10 @@ public class DBHelper extends SQLiteOpenHelper {
 					src.close();
 
 					dst.close();
+					
+					if(currentBackupDB.exists()){
+						currentBackupDB.delete();
+					}
 
 				}
 			}
@@ -620,10 +626,11 @@ public class DBHelper extends SQLiteOpenHelper {
 		ContestantStats stat = null;
 		if(statCurs.moveToFirst()){
 			stat = new ContestantStats();
-			stat.setHighScore(statCurs.getDouble(2));
-			stat.setAvgScore(statCurs.getDouble(3));
-			stat.setWins(statCurs.getInt(4));
-			stat.setLosses(statCurs.getInt(5));
+			stat.setHighScore(statCurs.getDouble(statCurs.getColumnIndex(StatsRollupTable.HIGH_SCORE)));
+			stat.setAvgScore(statCurs.getDouble(statCurs.getColumnIndex(StatsRollupTable.AVG_SCORE)));
+			stat.setTotalScore(statCurs.getDouble(statCurs.getColumnIndex(StatsRollupTable.TOTAL_SCORE)));
+			stat.setWins(statCurs.getInt(statCurs.getColumnIndex(StatsRollupTable.WINS)));
+			stat.setLosses(statCurs.getInt(statCurs.getColumnIndex(StatsRollupTable.LOSSES)));
 		}
 
 		statCurs.close();
@@ -668,7 +675,8 @@ public class DBHelper extends SQLiteOpenHelper {
 			values.put(StatsRollupTable.AVG_SCORE, statCurs.getDouble(1));
 			values.put(StatsRollupTable.WINS, statCurs.getInt(2));
 			values.put(StatsRollupTable.LOSSES, statCurs.getInt(3));
-
+			double total = statCurs.getDouble(1) * statCurs.getDouble(1);
+			values.put(StatsRollupTable.TOTAL_SCORE, total);
 
 			if(insertStats){
 				insertContestantStats(contestant, values);
@@ -697,8 +705,8 @@ public class DBHelper extends SQLiteOpenHelper {
 			Cursor statsCurs = getContestantStatsByHighScore(gameStats.getContestant());
 			statsCurs.moveToFirst();
 			while(!statsCurs.isAfterLast()){
-				if(!statsCurs.getString(0).equals(gameStats.getGameId())){
-					stats.setHighScore(statsCurs.getDouble(3));
+				if(!statsCurs.getString(statsCurs.getColumnIndex(StatsRollupTable.ID)).equals(gameStats.getGameId())){
+					stats.setHighScore(statsCurs.getDouble(statsCurs.getColumnIndex(StatsRollupTable.HIGH_SCORE)));
 					break;
 				}
 				statsCurs.moveToNext();
@@ -714,10 +722,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
 		double newAvgMpr = (avgMpr - gameStats.getScore())/totalgames;
 		stats.setAvgScore(newAvgMpr);
-
+		
+		double newTotal = stats.getAvgScore() * stats.getWins();
+		stats.setTotalScore(newTotal);
+		
 		ContentValues values = new ContentValues();
 		values.put(StatsRollupTable.HIGH_SCORE, stats.getHighScore());
 		values.put(StatsRollupTable.AVG_SCORE, stats.getAvgScore());
+		values.put(StatsRollupTable.TOTAL_SCORE, stats.getTotalScore());
 		values.put(StatsRollupTable.WINS, stats.getWins());
 		values.put(StatsRollupTable.LOSSES, stats.getLosses());
 
@@ -790,7 +802,10 @@ public class DBHelper extends SQLiteOpenHelper {
 		String orderBy = null;
 
 		switch (statType) {
-		case TOP_SCORE_STAT:
+		case TOTAL_SCORE_STAT:
+			orderBy = "total_score desc";
+			break;
+		case HIGH_SCORE_STAT:
 			orderBy = "high_score desc";
 			break;
 		case AVG_SCORE_STAT:

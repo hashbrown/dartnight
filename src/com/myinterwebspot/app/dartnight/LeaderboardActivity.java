@@ -24,18 +24,15 @@ public class LeaderboardActivity extends ExpandableListActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.leaderboard_layout);
         
-        db = new DBHelper(this);
-        mAdapter = new LeaderboardAdapter(this,new Leaderboard(db));
-	    setListAdapter(mAdapter);
-       
+        db = new DBHelper(this);   
     }
     
     
     
     @Override
-	protected void onRestart() {
+	protected void onStart() {
 		// TODO Auto-generated method stub
-		super.onRestart();
+		super.onStart();
 		 mAdapter = new LeaderboardAdapter(this,new Leaderboard(db));
 	     setListAdapter(mAdapter);
 	}

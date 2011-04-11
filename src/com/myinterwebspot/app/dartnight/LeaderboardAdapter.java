@@ -20,8 +20,8 @@ import com.myinterwebspot.app.dartnight.model.Player;
 import com.myinterwebspot.app.dartnight.model.Team;
 
 public class LeaderboardAdapter extends BaseExpandableListAdapter {
-	private String[] groups = new String[6];
-	List<LeaderboardItem>[] children = new List[6];
+	private String[] groups = new String[7];
+	List<LeaderboardItem>[] children = new List[7];
 	
 	
 	private Context ctx;
@@ -123,71 +123,21 @@ public class LeaderboardAdapter extends BaseExpandableListAdapter {
 	}
 	
 	protected void loadData(){
-		this.groups = new String[]{ "Team High Score", "Team High Average", "Team Wins", 
-					"Player High Score", "Player High Average", "Player Wins" };
+		this.groups = new String[]{"Top Players", "Player High Score", "Player High Average", "Player Wins",
+				"Team High Score", "Team High Average", "Team Wins"};
 		
-		TeamLeaderboardTask task = new TeamLeaderboardTask(){
-			
-			@Override
-			protected void onPostExecute(List<Team> result) {
-				children[0] = getTeamHighScores(result);
-			}
-
-			@Override
-			protected List<Team> doInBackground(Void... params) {
-				// TODO Auto-generated method stub
-				return leaderboard.getTopScoreTeams();
-			}
-						
-		};
-		
-		task.execute();
-		
-		task = new TeamLeaderboardTask(){
-			
-			@Override
-			protected void onPostExecute(List<Team> result) {
-				children[1] = getTeamHighAverageScores(result);
-			}
-
-			@Override
-			protected List<Team> doInBackground(Void... params) {
-				// TODO Auto-generated method stub
-				return leaderboard.getAverageScoreTeams();
-			}
-						
-		};
-		
-		task.execute();
-		
-		task = new TeamLeaderboardTask(){
-			
-			@Override
-			protected void onPostExecute(List<Team> result) {
-				children[2] = getTeamMostWins(result);
-			}
-
-			@Override
-			protected List<Team> doInBackground(Void... params) {
-				// TODO Auto-generated method stub
-				return leaderboard.getWinningTeams();
-			}
-						
-		};
-		
-		task.execute();
 		
 		PlayerLeaderboardTask playerTask = new PlayerLeaderboardTask(){
 			
 			@Override
 			protected void onPostExecute(List<Player> result) {
-				children[3] = getPlayerHighScores(result);
+				children[0] = getPlayerTotalScores(result);
 			}
 
 			@Override
 			protected List<Player> doInBackground(Void... params) {
 				// TODO Auto-generated method stub
-				return leaderboard.getTopScorePlayers();
+				return leaderboard.getTotalScorePlayers();
 			}
 						
 		};
@@ -198,7 +148,24 @@ public class LeaderboardAdapter extends BaseExpandableListAdapter {
 			
 			@Override
 			protected void onPostExecute(List<Player> result) {
-				children[4] = getPlayerHighAverageScores(result);
+				children[1] = getPlayerHighScores(result);
+			}
+
+			@Override
+			protected List<Player> doInBackground(Void... params) {
+				// TODO Auto-generated method stub
+				return leaderboard.getHighScorePlayers();
+			}
+						
+		};
+		
+		playerTask.execute();
+		
+		playerTask = new PlayerLeaderboardTask(){
+			
+			@Override
+			protected void onPostExecute(List<Player> result) {
+				children[2] = getPlayerHighAverageScores(result);
 			}
 
 			@Override
@@ -215,7 +182,7 @@ public class LeaderboardAdapter extends BaseExpandableListAdapter {
 			
 			@Override
 			protected void onPostExecute(List<Player> result) {
-				children[5] = getPlayerMostWins(result);
+				children[3] = getPlayerMostWins(result);
 			}
 
 			@Override
@@ -227,6 +194,57 @@ public class LeaderboardAdapter extends BaseExpandableListAdapter {
 		};
 		
 		playerTask.execute();
+		
+		TeamLeaderboardTask task = new TeamLeaderboardTask(){
+			
+			@Override
+			protected void onPostExecute(List<Team> result) {
+				children[4] = getTeamHighScores(result);
+			}
+
+			@Override
+			protected List<Team> doInBackground(Void... params) {
+				// TODO Auto-generated method stub
+				return leaderboard.getTopScoreTeams();
+			}
+						
+		};
+		
+		task.execute();
+		
+		task = new TeamLeaderboardTask(){
+			
+			@Override
+			protected void onPostExecute(List<Team> result) {
+				children[5] = getTeamHighAverageScores(result);
+			}
+
+			@Override
+			protected List<Team> doInBackground(Void... params) {
+				// TODO Auto-generated method stub
+				return leaderboard.getAverageScoreTeams();
+			}
+						
+		};
+		
+		task.execute();
+		
+		task = new TeamLeaderboardTask(){
+			
+			@Override
+			protected void onPostExecute(List<Team> result) {
+				children[6] = getTeamMostWins(result);
+			}
+
+			@Override
+			protected List<Team> doInBackground(Void... params) {
+				// TODO Auto-generated method stub
+				return leaderboard.getWinningTeams();
+			}
+						
+		};
+		
+		task.execute();
 				
 	}
 
@@ -274,6 +292,25 @@ public class LeaderboardAdapter extends BaseExpandableListAdapter {
 			item.rank = rank;
 			item.name = team.getName();
 			item.score = String.valueOf(team.getContestantStats().getWins());
+			leaders.add(item);
+			rank++;
+		}
+		
+		return leaders;
+	}
+	
+	private List<LeaderboardItem> getPlayerTotalScores(List<Player> players) {
+		List<LeaderboardItem> leaders = new ArrayList<LeaderboardItem>();
+		NumberFormat nf = NumberFormat.getInstance();
+		nf.setMaximumFractionDigits(2);
+		nf.setMinimumFractionDigits(2);
+		
+		int rank = 1;
+		for (Player player : players) {
+			LeaderboardItem item = new LeaderboardItem();
+			item.rank = rank;
+			item.name = player.getNickName();
+			item.score = nf.format(player.getContestantStats().getTotalScore());
 			leaders.add(item);
 			rank++;
 		}

@@ -2,7 +2,9 @@ package com.myinterwebspot.app.dartnight.db;
 
 public class UpgradeStrategyFactory {
 	
-	private DBUpgradeStrategy[] strategies = new DBUpgradeStrategy[]{new UpgradeDBToVersion2()};
+	private DBUpgradeStrategy[] strategies = 
+		new DBUpgradeStrategy[]{new UpgradeDBToVersion2(),
+								new UpgradeDBToVersion3()};
 	
 	public DBUpgradeStrategy getUpgradeStrategy(int oldVersion, int newVersion){
 		
