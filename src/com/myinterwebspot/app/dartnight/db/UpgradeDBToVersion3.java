@@ -31,10 +31,15 @@ public class UpgradeDBToVersion3 implements DBUpgradeStrategy {
 
 		statCurs.moveToFirst();
 		while(!statCurs.isAfterLast()){
+						
 			double avgScore = statCurs.getDouble(statCurs.getColumnIndex(StatsRollupTable.AVG_SCORE));
 			int wins = statCurs.getInt(statCurs.getColumnIndex(StatsRollupTable.WINS));
-			double totalScore = avgScore * wins;
-			updateValues.put(StatsRollupTable.TOTAL_SCORE, totalScore);
+			int losses = statCurs.getInt(statCurs.getColumnIndex(StatsRollupTable.LOSSES));
+			int totalgames = wins + losses;
+			double winningPct = wins/totalgames;		
+			double total = avgScore * (winningPct * 100);
+			
+			updateValues.put(StatsRollupTable.TOTAL_SCORE, total);
 			updateWhereArgs[0] = statCurs.getString(statCurs.getColumnIndex(StatsRollupTable.ID));
 			updateWhereArgs[1] = statCurs.getString(statCurs.getColumnIndex(StatsRollupTable.TYPE));
 
@@ -45,6 +50,5 @@ public class UpgradeDBToVersion3 implements DBUpgradeStrategy {
 		statCurs.close();
 
 	}
-
 
 }

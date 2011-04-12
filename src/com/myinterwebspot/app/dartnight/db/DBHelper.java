@@ -41,6 +41,7 @@ public class DBHelper extends SQLiteOpenHelper {
 	}
 	
 	
+	
 	@Override
 	public void onCreate(SQLiteDatabase db) {
 		GameTable.create(db);
@@ -668,14 +669,21 @@ public class DBHelper extends SQLiteOpenHelper {
 			insertStats = true;
 		} 
 
-		if(statCurs.moveToFirst()){			
-
+		if(statCurs.moveToFirst()){		
+			
+			int wins = statCurs.getInt(2);
+			int losses = statCurs.getInt(3);
+			double highscore = statCurs.getDouble(0);
+			double avgscore = statCurs.getDouble(1);
+			int totalgames = wins + losses;
+			double winningPct = wins/totalgames;		
+			double total = avgscore * (winningPct * 100);
+			
 			ContentValues values = new ContentValues();
-			values.put(StatsRollupTable.HIGH_SCORE, statCurs.getDouble(0));
-			values.put(StatsRollupTable.AVG_SCORE, statCurs.getDouble(1));
-			values.put(StatsRollupTable.WINS, statCurs.getInt(2));
-			values.put(StatsRollupTable.LOSSES, statCurs.getInt(3));
-			double total = statCurs.getDouble(1) * statCurs.getDouble(1);
+			values.put(StatsRollupTable.HIGH_SCORE, highscore);
+			values.put(StatsRollupTable.AVG_SCORE, avgscore);
+			values.put(StatsRollupTable.WINS, wins);
+			values.put(StatsRollupTable.LOSSES, losses);
 			values.put(StatsRollupTable.TOTAL_SCORE, total);
 
 			if(insertStats){
@@ -723,7 +731,8 @@ public class DBHelper extends SQLiteOpenHelper {
 		double newAvgMpr = (avgMpr - gameStats.getScore())/totalgames;
 		stats.setAvgScore(newAvgMpr);
 		
-		double newTotal = stats.getAvgScore() * stats.getWins();
+		double winningPct = stats.getWins()/totalgames;		
+		double newTotal = stats.getAvgScore() * (winningPct * 100);
 		stats.setTotalScore(newTotal);
 		
 		ContentValues values = new ContentValues();
