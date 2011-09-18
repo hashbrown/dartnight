@@ -1,6 +1,7 @@
 package com.myinterwebspot.app.dartnight;
 
 import java.text.DateFormat;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
 import java.util.List;
@@ -184,6 +185,8 @@ public class GameActivity extends Activity{
 	
 	protected void saveGameResults(int winner, String[] scores) {
 		
+		List<GameStat> results = new ArrayList<GameStat>();
+		
 		for (int i = 0; i < this.game.getTeams().size(); i++){					
 			Team team = this.game.getTeams().get(i);
 			GameStat teamStat = new GameStat(team, this.game);
@@ -192,22 +195,24 @@ public class GameActivity extends Activity{
 				teamStat.setWinner(true);
 			}
 			
-			teamStat.setScore(Double.valueOf(scores[i]));
+			teamStat.setScore(Float.valueOf(scores[i]));
 
 			team.addGameStat(teamStat);
-			new SaveGameStatTask().execute(teamStat);
-
+			results.add(teamStat);
+			
 			Set<Player> winningPlayers = team.getPlayers();
 			for (Player player : winningPlayers) {
 				GameStat playerStat = new GameStat(player, this.game);
 				if(i==winner){
 					playerStat.setWinner(true);
 				}
-				playerStat.setScore(Double.valueOf(scores[i]));
-				new SaveGameStatTask().execute(playerStat);
+				playerStat.setScore(Float.valueOf(scores[i]));
+				player.addGameStat(playerStat);
+				results.add(playerStat);
 			}		
 		}
 		
+		new SaveGameStatTask().execute(results.toArray(new GameStat[results.size()]));
 		this.gameAdapter.notifyDataSetChanged();
 
 	}
@@ -407,7 +412,9 @@ public class GameActivity extends Activity{
 
 		@Override
 		protected Void doInBackground(GameStat... params) {
-			db.saveGameStats(params[0]);
+			for (int i = 0; i < params.length; i++) {				
+				db.saveGameStats(params[i]);
+			}
 			return null;
 		}
 		

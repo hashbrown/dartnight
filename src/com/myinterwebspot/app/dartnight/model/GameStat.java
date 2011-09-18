@@ -5,7 +5,7 @@ public class GameStat {
 	private String gameId;
 	private Contestant contestant;
 	private boolean isWinner;
-	private double score;
+	private float score;
 	
 	public GameStat(Contestant contestant, Game game){
 		this.contestant = contestant;
@@ -34,10 +34,10 @@ public class GameStat {
 	public void setWinner(boolean isWinner) {
 		this.isWinner = isWinner;
 	}
-	public double getScore() {
+	public float getScore() {
 		return score;
 	}
-	public void setScore(double score) {
+	public void setScore(float score) {
 		this.score = score;
 	}
 

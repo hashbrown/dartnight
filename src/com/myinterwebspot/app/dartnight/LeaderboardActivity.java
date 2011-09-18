@@ -5,8 +5,10 @@ import com.myinterwebspot.app.dartnight.model.Leaderboard;
 
 import android.app.ExpandableListActivity;
 import android.os.Bundle;
+import android.view.View;
 import android.widget.BaseExpandableListAdapter;
 import android.widget.ExpandableListAdapter;
+import android.widget.ExpandableListView;
 
 
 
@@ -14,7 +16,7 @@ import android.widget.ExpandableListAdapter;
  * Demonstrates expandable lists using a custom {@link ExpandableListAdapter}
  * from {@link BaseExpandableListAdapter}.
  */
-public class LeaderboardActivity extends ExpandableListActivity {
+public class LeaderboardActivity extends FixedExpandableListActivity {
 
     LeaderboardAdapter mAdapter;
     DBHelper db;
@@ -44,5 +46,5 @@ public class LeaderboardActivity extends ExpandableListActivity {
 		super.onDestroy();
 		this.db.close();
 	}
-
+	
 }

@@ -528,7 +528,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
 		Cursor curs = getReadableDatabase().query(GameStatsTable.TABLE_NAME, null, whereClause, whereArgs, null, null, null);
 		if(curs.moveToFirst()){
-			stats.setScore(curs.getDouble(3));
+			stats.setScore(curs.getFloat(3));
 			stats.setWinner(curs.getInt(4)==1?true:false);
 		}
 
@@ -627,9 +627,9 @@ public class DBHelper extends SQLiteOpenHelper {
 		ContestantStats stat = null;
 		if(statCurs.moveToFirst()){
 			stat = new ContestantStats();
-			stat.setHighScore(statCurs.getDouble(statCurs.getColumnIndex(StatsRollupTable.HIGH_SCORE)));
-			stat.setAvgScore(statCurs.getDouble(statCurs.getColumnIndex(StatsRollupTable.AVG_SCORE)));
-			stat.setTotalScore(statCurs.getDouble(statCurs.getColumnIndex(StatsRollupTable.TOTAL_SCORE)));
+			stat.setHighScore(statCurs.getFloat(statCurs.getColumnIndex(StatsRollupTable.HIGH_SCORE)));
+			stat.setAvgScore(statCurs.getFloat(statCurs.getColumnIndex(StatsRollupTable.AVG_SCORE)));
+			stat.setTotalScore(statCurs.getFloat(statCurs.getColumnIndex(StatsRollupTable.TOTAL_SCORE)));
 			stat.setWins(statCurs.getInt(statCurs.getColumnIndex(StatsRollupTable.WINS)));
 			stat.setLosses(statCurs.getInt(statCurs.getColumnIndex(StatsRollupTable.LOSSES)));
 		}
@@ -673,11 +673,11 @@ public class DBHelper extends SQLiteOpenHelper {
 			
 			int wins = statCurs.getInt(2);
 			int losses = statCurs.getInt(3);
-			double highscore = statCurs.getDouble(0);
-			double avgscore = statCurs.getDouble(1);
-			int totalgames = wins + losses;
-			double winningPct = wins/totalgames;		
-			double total = avgscore * (winningPct * 100);
+			float highscore = statCurs.getFloat(0);
+			float avgscore = statCurs.getFloat(1);
+			float totalgames = wins + losses;
+			float winningPct = wins/totalgames;		
+			float total = avgscore * (winningPct * 100);
 			
 			ContentValues values = new ContentValues();
 			values.put(StatsRollupTable.HIGH_SCORE, highscore);
@@ -714,7 +714,7 @@ public class DBHelper extends SQLiteOpenHelper {
 			statsCurs.moveToFirst();
 			while(!statsCurs.isAfterLast()){
 				if(!statsCurs.getString(statsCurs.getColumnIndex(StatsRollupTable.ID)).equals(gameStats.getGameId())){
-					stats.setHighScore(statsCurs.getDouble(statsCurs.getColumnIndex(StatsRollupTable.HIGH_SCORE)));
+					stats.setHighScore(statsCurs.getFloat(statsCurs.getColumnIndex(StatsRollupTable.HIGH_SCORE)));
 					break;
 				}
 				statsCurs.moveToNext();
@@ -725,14 +725,14 @@ public class DBHelper extends SQLiteOpenHelper {
 
 		}
 
-		double avgMpr = stats.getAvgScore();
+		float avgMpr = stats.getAvgScore();
 		int totalgames = stats.getWins() + stats.getLosses();
 
-		double newAvgMpr = (avgMpr - gameStats.getScore())/totalgames;
+		float newAvgMpr = (avgMpr - gameStats.getScore())/totalgames;
 		stats.setAvgScore(newAvgMpr);
 		
-		double winningPct = stats.getWins()/totalgames;		
-		double newTotal = stats.getAvgScore() * (winningPct * 100);
+		float winningPct = stats.getWins()/totalgames;		
+		float newTotal = stats.getAvgScore() * (winningPct * 100);
 		stats.setTotalScore(newTotal);
 		
 		ContentValues values = new ContentValues();

@@ -1,14 +1,12 @@
 package com.myinterwebspot.app.dartnight.model;
 
 public class ContestantStats{
-	
-	
-	
+		
 	private int wins = 0;
 	private int losses = 0;
-	private double highScore = 0.0;
-	private double avgScore = 0.0;
-	private double totalScore = 0.0;
+	private float highScore = 0.0f;
+	private float avgScore = 0.0f;
+	private float totalScore = 0.0f;
 	
 	public int getWins() {
 		return wins;
@@ -22,22 +20,22 @@ public class ContestantStats{
 	public void setLosses(int losses) {
 		this.losses = losses;
 	}
-	public double getHighScore() {
+	public float getHighScore() {
 		return highScore;
 	}
-	public void setHighScore(double highScore) {
+	public void setHighScore(float highScore) {
 		this.highScore = highScore;
 	}
-	public double getAvgScore() {
+	public float getAvgScore() {
 		return avgScore;
 	}
-	public void setAvgScore(double avgScore) {
+	public void setAvgScore(float avgScore) {
 		this.avgScore = avgScore;
 	}
-	public double getTotalScore() {
+	public float getTotalScore() {
 		return totalScore;
 	}
-	public void setTotalScore(double totalScore) {
+	public void setTotalScore(float totalScore) {
 		this.totalScore = totalScore;
 	}
 	
