@@ -12,12 +12,14 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 
+import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.SQLException;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.net.Uri;
 import android.os.Environment;
 import android.util.Log;
 
@@ -29,6 +31,7 @@ import com.myinterwebspot.app.dartnight.model.GameStat;
 import com.myinterwebspot.app.dartnight.model.GameState;
 import com.myinterwebspot.app.dartnight.model.Player;
 import com.myinterwebspot.app.dartnight.model.Team;
+import com.myinterwebspot.app.dartnight.provider.DataContract;
 
 
 public class DBHelper extends SQLiteOpenHelper {
@@ -36,8 +39,11 @@ public class DBHelper extends SQLiteOpenHelper {
 	private static final String DATABASE_NAME = "DartsDB";
 	private static final int DATABASE_VERSION = 3;
 	
+	private ContentResolver cr;
+	
 	public DBHelper(Context context) {
 		super(context, DATABASE_NAME, null, DATABASE_VERSION);
+		cr = context.getContentResolver();
 	}
 	
 	
@@ -191,7 +197,12 @@ public class DBHelper extends SQLiteOpenHelper {
 	}
 
 	private void deleteGame(String gameId){
-		getWritableDatabase().delete(GameTable.TABLE_NAME, GameTable._ID + "=" + gameId, null);
+		Log.d("DBHelper", "Deleting Game[" + gameId + "]");
+		
+		Uri uri = Uri.withAppendedPath(DataContract.Games.CONTENT_ID_URI_BASE, gameId);
+		cr.delete(uri, null, null);
+		
+		Log.d("DBHelper", "Deleting Game[" + gameId + "]");
 	}
 
 	public void saveTeam(Team team) {
@@ -351,19 +362,22 @@ public class DBHelper extends SQLiteOpenHelper {
 
 	private void updateGame(String gameId, ContentValues values) {
 		Log.d("DBHelper", "Updating Game[" + gameId + "]");
-		getWritableDatabase().update(GameTable.TABLE_NAME, values, GameTable._ID + "=" + gameId, null);
+		
+		Uri uri = Uri.withAppendedPath(DataContract.Games.CONTENT_ID_URI_BASE, gameId);
+		cr.update(uri, values, null, null);
+		
 		Log.d("DBHelper", "Updated Game[" + gameId + "]");
 
 	}
 
 	private long insertGame(ContentValues values) {
 		Log.d("DBHelper", "Inserting new Game");
-		long rowId = getWritableDatabase().insert(GameTable.TABLE_NAME, null, values);
-		if( rowId < 0){
-			throw new SQLException("Failed to insert new Game");
-		}
-
+		
+		Uri uri = cr.insert(DataContract.Games.CONTENT_URI, values);
+		long rowId =  Long.valueOf(uri.getLastPathSegment());
+		
 		Log.d("DBHelper","Inserted Game[" + rowId + "]");
+		
 		return rowId;
 
 	}

@@ -4,12 +4,24 @@
 package com.myinterwebspot.app.dartnight.db;
 
 import android.database.sqlite.SQLiteDatabase;
+import android.net.Uri;
 import android.provider.BaseColumns;
 import android.util.Log;
 
 public final class GameTable implements BaseColumns {
-
 	
+	/**
+     * The MIME type of {@link #CONTENT_URI}.
+     */
+    public static final String CONTENT_TYPE
+            = "vnd.android.cursor.dir/vnd.myinterwebspot.dartnight.game";
+
+    /**
+     * The MIME type of a {@link #CONTENT_URI} sub-directory of a single row.
+     */
+    public static final String CONTENT_ITEM_TYPE
+            = "vnd.android.cursor.item/vnd.myinterwebspot.dartnight.game";
+
 	// This class cannot be instantiated
 	private GameTable() {}
 
