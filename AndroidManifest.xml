@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
       package="com.myinterwebspot.app.dartnight"
-      android:versionCode="1"
-      android:versionName="1.0">
+      android:versionCode="12"
+      android:versionName="1.2">
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"></uses-permission>
+	<uses-sdk android:minSdkVersion="8" android:targetSdkVersion="15" />
     <application android:icon="@drawable/dartboard_icon" android:label="@string/app_name"
-    			 android:debuggable="true"
-    			 android:theme="@style/defaultTheme" >
-        <activity android:name=".HomeActivity"
-                  android:label="@string/app_name"
-                  android:theme="@style/defaultTabTheme">
+    			 android:theme="@style/Theme.Sherlock.Light" >
+        <activity android:name=".app.HomeActivity"
+                  android:label="@string/app_name">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
@@ -21,7 +20,5 @@
 		<activity android:name=".EditPlayerActivity"/>
 		<activity android:name=".LeaderboardActivity"/>
     </application>
-	<uses-sdk android:minSdkVersion="4" 
-              android:targetSdkVersion="7" />
 
 </manifest> 

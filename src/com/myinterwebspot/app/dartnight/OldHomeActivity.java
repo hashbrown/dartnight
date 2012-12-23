@@ -17,7 +17,7 @@ import android.widget.TabHost;
 import android.widget.TabWidget;
 import android.widget.TextView;
 
-public class HomeActivity extends TabActivity {
+public class OldHomeActivity extends TabActivity {
 
 
 	/** Called when the activity is first created. */

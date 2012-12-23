@@ -7,6 +7,9 @@
     <string name="manage_players">Manage Players</string>
     <string name="view_leaderboard">View Leaderboard</string>
     <string name="select_teams_dialog_header">Choose Number of Teams</string>
+    <!-- ACTION BAR -->
+    <string name="tab_games">Games</string>
+    <string name="tab_players">Players</string>
     <!-- LIST GAMES SCREEN -->
     <string name="create_new_game">Start A New Game</string>
     <string name="menu_delete_game">Delete Game</string>
