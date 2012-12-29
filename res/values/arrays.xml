@@ -1,9 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<resources>
-    <string-array name="main_navigation">
-        <item>Home</item>
-        <item>Games</item>
-        <item>Players</item>
-        <item>Leaderboard</item>
-    </string-array>
-</resources>
