@@ -1,6 +1,7 @@
 package com.myinterwebspot.app.dartnight.auth;
 
 import com.myinterwebspot.app.dartnight.R;
+import com.myinterwebspot.app.dartnight.model.User;
 import com.parse.ParseUser;
 
 import android.accounts.Account;
@@ -388,12 +389,14 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         protected String doInBackground(Void... params) {
             try {
             	Log.i(TAG,"SIGNUP WITH PARSE");
-                ParseUser user = new ParseUser();
+                User user = new User();
                 user.setUsername(mUsername);
                 user.setPassword(mPassword);
                 user.setEmail(email.getText().toString());
-                user.put("firstname", firstName.getText().toString());
-                user.put("lastname", lastName.getText().toString());
+                user.setFirstName(firstName.getText().toString());
+                user.setLastName(lastName.getText().toString());
+//                user.put("firstname", firstName.getText().toString());
+//                user.put("lastname", lastName.getText().toString());
                 
                 user.signUp();
                 return user.getUsername(); //TODO hash password as auth token?

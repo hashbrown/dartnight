@@ -1,105 +1,94 @@
 package com.myinterwebspot.app.dartnight;
 
-import java.io.IOException;
-
-import android.accounts.Account;
-import android.accounts.AccountManager;
-import android.accounts.AccountsException;
-import android.accounts.OperationCanceledException;
-import android.app.Activity;
-import android.os.AsyncTask;
-import android.os.Bundle;
+import android.content.Intent;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.myinterwebspot.app.dartnight.auth.Authenticator;
 import com.parse.ParseUser;
 
-public class HomeActivity extends Activity {
-	
+public class HomeActivity extends BaseActivity {
+
 	static String TAG = "HomeActivity";
-	
-	ParseUser user;
-	
-	/** Called when the activity is first created. */
-	public void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		setContentView(R.layout.main);
+
+	//	ParseUser user;
+	//
+	//	SharedPreferences prefs;
+	//
+	//	League currentLeague;
+	//	String leagueId;
+	//
+	//	int SELECT_LEAGUE_RESULT = 1;
+	//	
+	@Override
+	protected void onStart(){
+		super.onStart();
+		getActionBar().setSelectedNavigationItem(NavOption.SELECTED_LEAGUE.ordinal());
 	}
+
 
 	@Override
 	protected void onResume() {
 		Log.i(TAG,"ON RESUME");
 		super.onResume();
-		new AuthTask().execute();
+//		TextView helloText = (TextView) findViewById(R.id.hello);
+//		helloText.setText("Welcome!");
+	}
+
+	@Override
+	protected void onAuthenticated(){
+		//		String leagueId = prefs.getString("currentLeagueId", null);
+		//		if(leagueId == null){
+		//			startActivityForResult(new Intent(this, PickLeagueActivity.class), SELECT_LEAGUE_RESULT);
+		//		} else {
+		//			displayLeagueDetails(leagueId);
+		//		}
+		displayLeagueDetails(null);
+
+	}
+
+	@Override
+	protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+		// TODO Auto-generated method stub
+		super.onActivityResult(requestCode, resultCode, data);
+		if(requestCode == SELECT_LEAGUE_RESULT && resultCode == RESULT_OK){
+			String leagueId = data.getStringExtra("LEAGUE_ID_EXTRA");
+			prefs.edit().putString("currentLeagueId", leagueId);
+			displayLeagueDetails(leagueId);
+		}
 	}
 	
-	protected void onAuthenticated(){
+	@Override
+	protected int getContentViewResourceId() {
+		// TODO Auto-generated method stub
+		return R.layout.main;
+	}
+
+	//	@Override
+	//	public boolean onCreateOptionsMenu(Menu menu) {
+	//		Log.i(TAG,"onCreateOptionsMenu");
+	//		MenuInflater inflater = getMenuInflater();
+	//		inflater.inflate(R.menu.main_menu, menu);
+	//		return true;
+	//	}
+
+	//	@Override
+	//	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
+	//		if(itemPosition > 0){
+	//			NavOption selected = NavOption.values()[itemPosition];
+	//			startActivity(new Intent(this, selected.activity));
+	//		}
+	//		return true;
+	//	}
+
+	private void displayLeagueDetails(String leagueId){
 		user = ParseUser.getCurrentUser();
 		TextView helloText = (TextView) findViewById(R.id.hello);
 		helloText.setText("Welcome " + user.getString("firstname"));
+		//		helloText.setText("Welcome!");
 		Log.i(TAG, "USER " + user.getUsername() + " IS AUTHENTICATED, SHOW THE HOME SCREEN");
 	}
-	
-	protected void authenticate(){
-		final AccountManager manager = AccountManager.get(HomeActivity.this);
-		Account[] accounts;
-		
-		try{
-		while ((accounts = manager.getAccountsByType(Authenticator.ACCOUNT_TYPE)).length == 0) {
-			// add account returns future which we block until result is returned.
-			// user will be prompted to add new account
-			manager.addAccount(Authenticator.ACCOUNT_TYPE, null, null, null, HomeActivity.this, null, null).getResult();	
-		}
-		
-		} catch (OperationCanceledException e) {
-            Log.d(TAG, "Excepting retrieving account", e);
-        } catch (AccountsException e) {
-            Log.d(TAG, "Excepting retrieving account", e);
-        } catch (IOException e) {
-            Log.d(TAG, "Excepting retrieving account", e);
-        }
-	}
-	
-	
-	class AuthTask extends AsyncTask<Void,Void, ParseUser>{
-		
-		
 
-		@Override
-		protected void onPostExecute(ParseUser authUser) {
-			if(authUser != null){
-				onAuthenticated();
-			}
-		}
 
-		@Override
-		protected ParseUser doInBackground(Void... params) {
-			final AccountManager manager = AccountManager.get(HomeActivity.this);
-			Account[] accounts;
-			
-			try{
-			while ((accounts = manager.getAccountsByType(Authenticator.ACCOUNT_TYPE)).length == 0) {
-				// add account returns future which we block until result is returned.
-				// user will be prompted to add new account
-				Log.d(TAG,"No account exists, adding");
-				manager.addAccount(Authenticator.ACCOUNT_TYPE, null, null, null, HomeActivity.this, null, null).getResult();	
-			}
-			
-			} catch (OperationCanceledException e) {
-	            Log.d(TAG, "Excepting retrieving account", e);
-	        } catch (AccountsException e) {
-	            Log.d(TAG, "Excepting retrieving account", e);
-	        } catch (IOException e) {
-	            Log.d(TAG, "Excepting retrieving account", e);
-	        }
-			
-			
-			// at this point account manager should have taken care of login callbacks, etc
-			return ParseUser.getCurrentUser();
-			
-		}
-		
-	}
 	
+
 }

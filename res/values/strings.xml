@@ -54,5 +54,15 @@
         name="back_button_label">Back</string>
     <string name="register_user">New User</string>
     <string name="existing_user">Existing User</string>
-
+    
+    <!-- Menus/Action Bar -->
+    <!-- Nav Spinner -->
+    <string name="nav_item_games">Games</string>
+    <string name="nav_item_players">Players</string>
+    <string name="nav_item_leaders">Leaders</string>
+    <string name="nav_item_leagues">Leagues</string>
+    
+    <string name="menu_switch_league">Change League</string>
+    <string name="menu_logout">Sign Out</string>
+     
 </resources>
