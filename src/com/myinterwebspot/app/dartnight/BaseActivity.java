@@ -2,7 +2,6 @@ package com.myinterwebspot.app.dartnight;
 
 import java.io.IOException;
 
-import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountsException;
 import android.accounts.OperationCanceledException;
@@ -16,22 +15,21 @@ import android.os.Bundle;
 import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
-import android.widget.TextView;
 
 import com.myinterwebspot.app.dartnight.auth.Authenticator;
 import com.myinterwebspot.app.dartnight.model.League;
+import com.myinterwebspot.app.dartnight.model.User;
 import com.parse.ParseUser;
 
 public abstract class BaseActivity extends Activity implements OnNavigationListener{
 
 	static String TAG = "HomeActivity";
 
-	ParseUser user;
-
 	SharedPreferences prefs;
 
 	League currentLeague;
 	String leagueId;
+	private NavOption currentNavOption;
 
 	int SELECT_LEAGUE_RESULT = 1;
 
@@ -47,17 +45,19 @@ public abstract class BaseActivity extends Activity implements OnNavigationListe
 
 		NavSpinnerAdapter dropdownAdapter = new NavSpinnerAdapter(this);		
 		actionBar.setListNavigationCallbacks(dropdownAdapter, this);
-		actionBar.setSelectedNavigationItem(NavOption.SELECTED_LEAGUE.ordinal());
-
+		
 		//TODO get League instance
 		leagueId = prefs.getString("currentLeagueId", "defaultLeague");
 		// TODO get name from League class
 		dropdownAdapter.setSelectedLeague(leagueId);
 	}
 	
+	
+	
 	@Override
-	protected void onStart(){
+	protected void onResume(){
 		super.onStart();
+		getActionBar().setSelectedNavigationItem(this.currentNavOption.ordinal());
 		new AuthTask().execute();
 	}
 
@@ -71,11 +71,15 @@ public abstract class BaseActivity extends Activity implements OnNavigationListe
 
 	@Override
 	public boolean onNavigationItemSelected(int itemPosition, long itemId) {
-		if(itemPosition > 0){
-			NavOption selected = NavOption.values()[itemPosition];
-			startActivity(new Intent(this, selected.activity));
+		NavOption selected = NavOption.values()[itemPosition];
+		if(!selected.activity.isAssignableFrom(this.getClass())){
+			startActivity(new Intent(this, selected.activity));			
 		}
 		return true;
+	}
+	
+	protected void setCurrentNavOption(NavOption selected){
+		this.currentNavOption = selected;
 	}
 
 	//	protected void authenticate(){
@@ -100,24 +104,23 @@ public abstract class BaseActivity extends Activity implements OnNavigationListe
 
 
 	protected abstract int getContentViewResourceId();
-	protected abstract void onAuthenticated();
+	protected abstract void onAuthenticated(User user);
 
 	class AuthTask extends AsyncTask<Void,Void, ParseUser>{		
 
 		@Override
 		protected void onPostExecute(ParseUser authUser) {
 			if(authUser != null){
-				onAuthenticated();
+				onAuthenticated(new User(authUser));
 			}
 		}
 
 		@Override
 		protected ParseUser doInBackground(Void... params) {
 			final AccountManager manager = AccountManager.get(BaseActivity.this);
-			Account[] accounts;
-
+			
 			try{
-				while ((accounts = manager.getAccountsByType(Authenticator.ACCOUNT_TYPE)).length == 0) {
+				while ((manager.getAccountsByType(Authenticator.ACCOUNT_TYPE)).length == 0) {
 					// add account returns future which we block until result is returned.
 					// user will be prompted to add new account
 					Log.d(TAG,"No account exists, adding");

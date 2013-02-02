@@ -2,28 +2,48 @@ package com.myinterwebspot.app.dartnight.model;
 
 import com.parse.ParseUser;
 
-public class User extends ParseUser {
+public class User{
 	
 	private static String FNAME_FIELD = "first_name";
 	private static String LNAME_FIELD = "last_name";
 	
+	private final ParseUser user;
 	
+	public User(ParseUser user){
+		this.user = user;
+	}
 	
 	public void setFirstName(String firstName) {
-		this.put(FNAME_FIELD, firstName);
+		user.put(FNAME_FIELD, firstName);
 	}
 	
 	public String getFirstName(){
-		return this.getString(FNAME_FIELD);
+		return user.getString(FNAME_FIELD);
 	}
 	
 	public void setLastName(String lastName) {
-		this.put(LNAME_FIELD, lastName);
+		user.put(LNAME_FIELD, lastName);
 	}
 	
 	public String getLastName(){
-		return this.getString(LNAME_FIELD);
+		return user.getString(LNAME_FIELD);
 	}
 	
-
+	//PARSE API
+	public String getUsername(){
+		return user.getUsername();
+	}
+	
+	public void setUsername(String username){
+		user.setUsername(username);
+	}
+	
+	public void setEmail(String email){
+		user.setEmail(email);
+	}
+	
+	public void setPassword(String password){
+		user.setPassword(password);
+	}
+	
 }

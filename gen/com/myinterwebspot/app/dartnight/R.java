@@ -15,31 +15,34 @@ public final class R {
         public static final int icon=0x7f020001;
     }
     public static final class id {
-        public static final int email_edit=0x7f070008;
-        public static final int email_label=0x7f070009;
-        public static final int firstname_edit=0x7f070005;
-        public static final int firstname_label=0x7f070004;
-        public static final int hello=0x7f070010;
-        public static final int lastname_edit=0x7f070006;
-        public static final int lastname_label=0x7f070007;
-        public static final int login=0x7f070002;
-        public static final int login_select=0x7f070000;
+        public static final int email_edit=0x7f070009;
+        public static final int email_label=0x7f07000a;
+        public static final int firstname_edit=0x7f070006;
+        public static final int firstname_label=0x7f070005;
+        public static final int hello=0x7f070000;
+        public static final int lastname_edit=0x7f070007;
+        public static final int lastname_label=0x7f070008;
+        public static final int login=0x7f070003;
+        public static final int login_select=0x7f070001;
         public static final int menu_logout=0x7f070013;
         public static final int menu_switch_league=0x7f070012;
-        public static final int message=0x7f070003;
-        public static final int message_bottom=0x7f07000e;
-        public static final int ok_button=0x7f07000f;
-        public static final int password_edit=0x7f07000c;
-        public static final int password_label=0x7f07000d;
-        public static final int register=0x7f070001;
+        public static final int message=0x7f070004;
+        public static final int message_bottom=0x7f07000f;
+        public static final int ok_button=0x7f070010;
+        public static final int password_edit=0x7f07000d;
+        public static final int password_label=0x7f07000e;
+        public static final int register=0x7f070002;
         public static final int tv_nav_item=0x7f070011;
-        public static final int username_edit=0x7f07000a;
-        public static final int username_label=0x7f07000b;
+        public static final int username_edit=0x7f07000b;
+        public static final int username_label=0x7f07000c;
     }
     public static final class layout {
-        public static final int login_activity=0x7f030000;
-        public static final int main=0x7f030001;
-        public static final int nav_dropdown_item=0x7f030002;
+        public static final int games=0x7f030000;
+        public static final int home=0x7f030001;
+        public static final int leaders=0x7f030002;
+        public static final int login_activity=0x7f030003;
+        public static final int nav_dropdown_item=0x7f030004;
+        public static final int players=0x7f030005;
     }
     public static final class menu {
         public static final int main_menu=0x7f060000;

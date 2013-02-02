@@ -4,11 +4,13 @@ import android.content.Intent;
 import android.util.Log;
 import android.widget.TextView;
 
-import com.parse.ParseUser;
+import com.myinterwebspot.app.dartnight.model.User;
 
 public class HomeActivity extends BaseActivity {
 
 	static String TAG = "HomeActivity";
+	
+	private User user;
 
 	//	ParseUser user;
 	//
@@ -22,26 +24,27 @@ public class HomeActivity extends BaseActivity {
 	@Override
 	protected void onStart(){
 		super.onStart();
-		getActionBar().setSelectedNavigationItem(NavOption.SELECTED_LEAGUE.ordinal());
+		setCurrentNavOption(NavOption.SELECTED_LEAGUE);	
 	}
 
 
-	@Override
-	protected void onResume() {
-		Log.i(TAG,"ON RESUME");
-		super.onResume();
+//	@Override
+//	protected void onResume() {
+//		Log.i(TAG,"ON RESUME");
+//		super.onResume();
 //		TextView helloText = (TextView) findViewById(R.id.hello);
 //		helloText.setText("Welcome!");
-	}
+//	}
 
 	@Override
-	protected void onAuthenticated(){
+	protected void onAuthenticated(User user){
 		//		String leagueId = prefs.getString("currentLeagueId", null);
 		//		if(leagueId == null){
 		//			startActivityForResult(new Intent(this, PickLeagueActivity.class), SELECT_LEAGUE_RESULT);
 		//		} else {
 		//			displayLeagueDetails(leagueId);
 		//		}
+		this.user = user;
 		displayLeagueDetails(null);
 
 	}
@@ -59,8 +62,7 @@ public class HomeActivity extends BaseActivity {
 	
 	@Override
 	protected int getContentViewResourceId() {
-		// TODO Auto-generated method stub
-		return R.layout.main;
+		return R.layout.home;
 	}
 
 	//	@Override
@@ -81,11 +83,10 @@ public class HomeActivity extends BaseActivity {
 	//	}
 
 	private void displayLeagueDetails(String leagueId){
-		user = ParseUser.getCurrentUser();
 		TextView helloText = (TextView) findViewById(R.id.hello);
-		helloText.setText("Welcome " + user.getString("firstname"));
+		helloText.setText("Welcome " + this.user.getFirstName());
 		//		helloText.setText("Welcome!");
-		Log.i(TAG, "USER " + user.getUsername() + " IS AUTHENTICATED, SHOW THE HOME SCREEN");
+		Log.i(TAG, "USER " + this.user.getUsername() + " IS AUTHENTICATED, SHOW THE HOME SCREEN");
 	}
 
 

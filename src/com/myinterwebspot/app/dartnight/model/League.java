@@ -25,7 +25,7 @@ public class League extends ParseObject {
 	}
 	
 	public User getOwner(){
-		return (User)this.getParseUser(FIELD_OWNER);
+		return new User(this.getParseUser(FIELD_OWNER));
 	}
 
 }

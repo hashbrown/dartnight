@@ -49,9 +49,11 @@
         </activity>
         
         <activity
-            android:name=".GamesActivity"
-            android:theme="@android:style/Theme.Holo"/>
-            
+            android:name=".GamesActivity"/>
+        <activity
+            android:name=".LeaderboardActivity"/> 
+        <activity
+            android:name=".PlayersActivity"/>     
         
         <activity
             android:name=".auth.AuthenticatorActivity"

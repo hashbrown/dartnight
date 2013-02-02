@@ -389,7 +389,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         protected String doInBackground(Void... params) {
             try {
             	Log.i(TAG,"SIGNUP WITH PARSE");
-                User user = new User();
+            	ParseUser parseUser = new ParseUser();
+                User user = new User(parseUser);
                 user.setUsername(mUsername);
                 user.setPassword(mPassword);
                 user.setEmail(email.getText().toString());
@@ -398,7 +399,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
 //                user.put("firstname", firstName.getText().toString());
 //                user.put("lastname", lastName.getText().toString());
                 
-                user.signUp();
+                parseUser.signUp();
                 return user.getUsername(); //TODO hash password as auth token?
             } catch (Exception ex) {
                 Log.e(TAG, "UserRegistrationTask.doInBackground: failed to create user");
