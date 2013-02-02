@@ -4,23 +4,24 @@ import com.myinterwebspot.app.dartnight.model.User;
 
 import android.widget.TextView;
 
-public class LeaderboardActivity extends BaseActivity {
+public class PlayersActivity extends BaseActivity {
 	
 	@Override
 	protected void onStart(){
 		super.onStart();
-		setCurrentNavOption(NavOption.LEADERS);	
+		setCurrentNavOption(NavOption.PLAYERS);	
 	}
-
 
 	@Override
 	protected int getContentViewResourceId() {
-		return R.layout.leaders;
+		return R.layout.players;
 	}
+	
 
 	@Override
 	protected void onAuthenticated(User user) {
 		TextView helloText = (TextView) findViewById(R.id.hello);
-		helloText.setText("Leaderboard for " + user.getFirstName());		
+		helloText.setText("Players for " + user.getFirstName());		
 	}
+
 }

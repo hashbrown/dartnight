@@ -1,6 +1,1 @@
-/bin
-.classpath
-.project
-*.class
-*.sql
-
+bin

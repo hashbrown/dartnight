@@ -1,43 +1,68 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="home_text">Tuesday night is Dart Night</string>
+    <string name="hello">Hello Dart Night!</string>
     <string name="app_name">Dart Night</string>
-    <!-- MAIN SCREEN -->
-    <string name="menu_new_game">New Game</string>
-    <string name="manage_players">Manage Players</string>
-    <string name="view_leaderboard">View Leaderboard</string>
-    <string name="select_teams_dialog_header">Choose Number of Teams</string>
-    <!-- ACTION BAR -->
-    <string name="tab_games">Games</string>
-    <string name="tab_players">Players</string>
-    <!-- LIST GAMES SCREEN -->
-    <string name="create_new_game">Start A New Game</string>
-    <string name="menu_delete_game">Delete Game</string>
-    <!-- LIST PLAYERS SCREEN -->
-    <string name="select_players">Select Players</string>
-    <string name="create_new_player">Create A New Player</string>
-    <!-- PLAYER MENU -->
-    <string name="menu_add_player">Add Player</string>
-    <string name="menu_edit_player">Edit Player</string>
-    <string name="menu_delete_player">Delete Player</string>
-    <string name="save_player">Save Player</string>
-    <string name="label_player_first_name">Enter First Name</string>
-    <string name="label_player_last_name">Enter Last Name</string>
-    <string name="label_player_nick_name">Enter Nick Name</string>
-    <string name="player_first_name">First Name</string>
-    <string name="player_last_name">Last Name</string>
-    <string name="player_nick_name">Nick Name</string>
-    <!-- GAME SCREEN -->
-    <string name="label_team_1">TEAM 1</string>
-    <string name="label_team_2">TEAM 2</string>
-    <string name="label_team_3">TEAM 3</string>
-    <string name="label_team_4">TEAM 4</string>
-    <string name="generate_teams">Pick My Teams</string>
-    <string name="select_winner">Select Winner</string>
-    <string name="enter_mpr">Enter Marks Per Round</string>
-    <string name="winner">WINNER!</string>
-    <!-- GAME RESULTS DIALOG -->
-    <string name="save_results">Save Results</string>
-    <!--  LEADERBOARD -->
-    <string name="leaderboard_empty">No games have been completed.</string>
+    
+    <!-- Title string for Login activity-->
+    <string
+        name="ui_activity_title">Sign-in</string>
+    <!-- Message shown in progress dialog while app connects to the server -->
+    <string
+        name="ui_activity_authenticating">Authenticating\u2026</string>
+    
+    <!-- AuthenticatorActivity -->
+    <skip />
+     <string
+        name="firstname_label">First Name</string>
+     <string
+        name="lastname_label">Last Name</string>
+     <string
+        name="email_label">Email</string>
+    <!-- Label above username EditText -->
+    <string
+        name="login_username_label">Username</string>
+    <!-- Label above password EditText -->
+    <string
+        name="login_password_label">Password</string>
+    <!-- Button to sign in after entering username and password -->
+    <string
+        name="login_ok_button">Sign in</string>
+
+    <!-- Message shown in dialog if the username or password is invalid. -->
+    <string
+        name="login_loginfail_text_both">The username or password isn\'t valid. A Sample SyncAdapter account is
+        required. Please try again. </string>
+    <!-- Message shown in dialog if the password is invalid -->
+    <string
+        name="login_loginfail_text_pwonly">You entered the wrong password or your account has changed.
+        Please re-enter your password.</string>
+    <!-- Message shown in dialog to prompt the user for their password -->
+    <string
+        name="login_loginfail_text_pwmissing">Type the password for this account.</string>
+    <!--
+        Message shown if the provided account doesn't support the current
+        activity.
+    -->
+    <string
+        name="login_newaccount_text">Sign in to your Sample SyncAdapter account. </string>
+
+    <!-- Button that takes the user to the "sign in" screen -->
+    <string
+        name="sign_in_button_label">Sign in</string>
+    <!-- Button for going to the previous screen or step -->
+    <string
+        name="back_button_label">Back</string>
+    <string name="register_user">New User</string>
+    <string name="existing_user">Existing User</string>
+    
+    <!-- Menus/Action Bar -->
+    <!-- Nav Spinner -->
+    <string name="nav_item_games">Games</string>
+    <string name="nav_item_players">Players</string>
+    <string name="nav_item_leaders">Leaders</string>
+    <string name="nav_item_leagues">Leagues</string>
+    
+    <string name="menu_switch_league">Change League</string>
+    <string name="menu_logout">Sign Out</string>
+     
 </resources>
