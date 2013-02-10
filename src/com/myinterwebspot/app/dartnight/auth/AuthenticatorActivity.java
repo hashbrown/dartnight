@@ -1,22 +1,16 @@
 package com.myinterwebspot.app.dartnight.auth;
 
-import com.myinterwebspot.app.dartnight.R;
-import com.myinterwebspot.app.dartnight.model.User;
-import com.parse.ParseUser;
-
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +18,10 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
+import com.myinterwebspot.app.dartnight.R;
+import com.myinterwebspot.app.dartnight.model.User;
+import com.parse.ParseUser;
 
 
 /**
@@ -47,7 +45,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     private AccountManager mAccountManager;
 
     /** Keep track of the login task so can cancel it if requested */
-    private AsyncTask mAuthTask = null;
+    private AsyncTask<Void,Void,String> mAuthTask = null;
 
     /** Keep track of the progress dialog so we can dismiss it */
     private ProgressDialog mProgressDialog = null;
@@ -93,19 +91,19 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     @Override
     public void onCreate(Bundle icicle) {
 
-        Log.i(TAG, "onCreate(" + icicle + ")");
         super.onCreate(icicle);
         mAccountManager = AccountManager.get(this);
-        Log.i(TAG, "loading data from Intent");
+        
         final Intent intent = getIntent();
         mUsername = intent.getStringExtra(PARAM_USERNAME);
         mRequestNewAccount = mUsername == null;
         mConfirmCredentials = intent.getBooleanExtra(PARAM_CONFIRM_CREDENTIALS, false);
-        Log.i(TAG, "    request new: " + mRequestNewAccount);
+        
         requestWindowFeature(Window.FEATURE_LEFT_ICON);
         setContentView(R.layout.login_activity);
         getWindow().setFeatureDrawableResource(
                 Window.FEATURE_LEFT_ICON, android.R.drawable.ic_dialog_alert);
+        
         loginRadio = (RadioButton) findViewById(R.id.login);
         registerRadio = (RadioButton) findViewById(R.id.register);
         mMessage = (TextView) findViewById(R.id.message);
@@ -117,6 +115,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         email = (EditText) findViewById(R.id.email_edit);
         mUsernameEdit = (EditText) findViewById(R.id.username_edit);
         mPasswordEdit = (EditText) findViewById(R.id.password_edit);
+        
         if (!TextUtils.isEmpty(mUsername)) mUsernameEdit.setText(mUsername);
         mMessage.setText(getMessage());
         
@@ -217,46 +216,25 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             	mAuthTask = new UserLoginTask();            	
             }
             // this is likely called from another ASYNC task, so execute this another executor or else it will never run.
-            mAuthTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+            mAuthTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[])null);
         }
     }
 
-    /**
-     * Called when response is received from the server for confirm credentials
-     * request. See onAuthenticationResult(). Sets the
-     * AccountAuthenticatorResult which is sent back to the caller.
-     *
-     * @param result the confirmCredentials result.
-     */
-    private void finishConfirmCredentials(boolean result) {
-        Log.i(TAG, "finishConfirmCredentials()");
-        final Account account = new Account(mUsername, Authenticator.ACCOUNT_TYPE);
-        mAccountManager.setPassword(account, mPassword);
-        final Intent intent = new Intent();
-        intent.putExtra(AccountManager.KEY_BOOLEAN_RESULT, result);
-        setAccountAuthenticatorResult(intent.getExtras());
-        setResult(RESULT_OK, intent);
-        finish();
-    }
 
     /**
      * Called when response is received from the server for authentication
      * request. See onAuthenticationResult(). Sets the
      * AccountAuthenticatorResult which is sent back to the caller. We store the
-     * authToken that's returned from the server as the 'password' for this
-     * account - so we're never storing the user's actual password locally.
+     * hashed password for this account - so we're never storing the user's actual password locally.
      *
      * @param result the confirmCredentials result.
      */
-    private void finishLogin(String authToken) {
+    private void finishLogin(String passwordHash) {
 
         Log.i(TAG, "finishLogin()");
         final Account account = new Account(mUsername, Authenticator.ACCOUNT_TYPE);
-//        if (mRequestNewAccount) {
-            mAccountManager.addAccountExplicitly(account, mPassword, null);
-//        } else {
-//            mAccountManager.setPassword(account, mPassword);
-//        }
+        mAccountManager.addAccountExplicitly(account, passwordHash, null);
+        
         final Intent intent = new Intent();
         intent.putExtra(AccountManager.KEY_ACCOUNT_NAME, mUsername);
         intent.putExtra(AccountManager.KEY_ACCOUNT_TYPE, Authenticator.ACCOUNT_TYPE);
@@ -283,11 +261,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         hideProgress();
 
         if (success) {
-            if (!mConfirmCredentials) {
-                finishLogin(authToken);
-            } else {
-                finishConfirmCredentials(success);
-            }
+            finishLogin(authToken);
         } else {
             Log.e(TAG, "onAuthenticationResult: failed to authenticate");
             if (mRequestNewAccount) {
@@ -355,8 +329,8 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
         protected String doInBackground(Void... params) {
             try {
             	Log.i(TAG,"LOGIN TO PARSE");
-                ParseUser user = ParseUser.logIn(mUsername, mPassword);
-                return user.getUsername(); //TODO hash password as auth token?
+                ParseUser.logIn(mUsername, mPassword);
+                return SimpleSHA1.hash(mPassword); 
             } catch (Exception ex) {
                 Log.e(TAG, "UserLoginTask.doInBackground: failed to authenticate");
                 Log.i(TAG, ex.toString());
@@ -396,11 +370,9 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
                 user.setEmail(email.getText().toString());
                 user.setFirstName(firstName.getText().toString());
                 user.setLastName(lastName.getText().toString());
-//                user.put("firstname", firstName.getText().toString());
-//                user.put("lastname", lastName.getText().toString());
                 
                 parseUser.signUp();
-                return user.getUsername(); //TODO hash password as auth token?
+                return SimpleSHA1.hash(mPassword); 
             } catch (Exception ex) {
                 Log.e(TAG, "UserRegistrationTask.doInBackground: failed to create user");
                 Log.i(TAG, ex.toString());

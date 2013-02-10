@@ -2,6 +2,7 @@ package com.myinterwebspot.app.dartnight;
 
 import java.io.IOException;
 
+import android.accounts.Account;
 import android.accounts.AccountManager;
 import android.accounts.AccountsException;
 import android.accounts.OperationCanceledException;
@@ -82,27 +83,7 @@ public abstract class BaseActivity extends Activity implements OnNavigationListe
 		this.currentNavOption = selected;
 	}
 
-	//	protected void authenticate(){
-	//		final AccountManager manager = AccountManager.get(HomeActivity.this);
-	//		Account[] accounts;
-	//		
-	//		try{
-	//		while ((accounts = manager.getAccountsByType(Authenticator.ACCOUNT_TYPE)).length == 0) {
-	//			// add account returns future which we block until result is returned.
-	//			// user will be prompted to add new account
-	//			manager.addAccount(Authenticator.ACCOUNT_TYPE, null, null, null, HomeActivity.this, null, null).getResult();	
-	//		}
-	//		
-	//		} catch (OperationCanceledException e) {
-	//            Log.d(TAG, "Excepting retrieving account", e);
-	//        } catch (AccountsException e) {
-	//            Log.d(TAG, "Excepting retrieving account", e);
-	//        } catch (IOException e) {
-	//            Log.d(TAG, "Excepting retrieving account", e);
-	//        }
-	//	}
-
-
+	
 	protected abstract int getContentViewResourceId();
 	protected abstract void onAuthenticated(User user);
 
@@ -117,14 +98,24 @@ public abstract class BaseActivity extends Activity implements OnNavigationListe
 
 		@Override
 		protected ParseUser doInBackground(Void... params) {
-			final AccountManager manager = AccountManager.get(BaseActivity.this);
 			
+			if(ParseUser.getCurrentUser() != null){
+				return ParseUser.getCurrentUser(); // authenticated session exists
+			}
+			
+			final AccountManager manager = AccountManager.get(BaseActivity.this);
+			Account[] accounts;
 			try{
-				while ((manager.getAccountsByType(Authenticator.ACCOUNT_TYPE)).length == 0) {
+				while ((accounts = manager.getAccountsByType(Authenticator.ACCOUNT_TYPE)).length == 0) {
 					// add account returns future which we block until result is returned.
 					// user will be prompted to add new account
 					Log.d(TAG,"No account exists, adding");
 					manager.addAccount(Authenticator.ACCOUNT_TYPE, null, null, null, BaseActivity.this, null, null).getResult();	
+				}
+				
+				// if no Parse session, force login by requesting auth token
+				if(ParseUser.getCurrentUser() == null){
+					manager.getAuthToken(accounts[0], Authenticator.ACCOUNT_TOKEN_TYPE, null, BaseActivity.this, null, null).getResult();
 				}
 
 			} catch (OperationCanceledException e) {
@@ -136,7 +127,7 @@ public abstract class BaseActivity extends Activity implements OnNavigationListe
 			}
 
 
-			// at this point account manager should have taken care of login callbacks, etc
+			// just return what we have
 			return ParseUser.getCurrentUser();
 
 		}
