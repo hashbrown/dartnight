@@ -1,22 +1,16 @@
 package com.myinterwebspot.app.dartnight.auth;
 
-import com.myinterwebspot.app.dartnight.R;
-import com.myinterwebspot.app.dartnight.model.User;
-import com.parse.ParseUser;
-
 import android.accounts.Account;
 import android.accounts.AccountAuthenticatorActivity;
 import android.accounts.AccountManager;
 import android.annotation.SuppressLint;
 import android.app.Dialog;
 import android.app.ProgressDialog;
-import android.content.ContentResolver;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.ContactsContract;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -24,6 +18,10 @@ import android.view.Window;
 import android.widget.EditText;
 import android.widget.RadioButton;
 import android.widget.TextView;
+
+import com.myinterwebspot.app.dartnight.R;
+import com.myinterwebspot.app.dartnight.model.User;
+import com.parse.ParseUser;
 
 
 /**
@@ -47,7 +45,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
     private AccountManager mAccountManager;
 
     /** Keep track of the login task so can cancel it if requested */
-    private AsyncTask mAuthTask = null;
+    private AsyncTask<Void,Void,String> mAuthTask = null;
 
     /** Keep track of the progress dialog so we can dismiss it */
     private ProgressDialog mProgressDialog = null;
@@ -218,7 +216,7 @@ public class AuthenticatorActivity extends AccountAuthenticatorActivity {
             	mAuthTask = new UserLoginTask();            	
             }
             // this is likely called from another ASYNC task, so execute this another executor or else it will never run.
-            mAuthTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, null);
+            mAuthTask.executeOnExecutor(AsyncTask.THREAD_POOL_EXECUTOR, (Void[])null);
         }
     }
 
