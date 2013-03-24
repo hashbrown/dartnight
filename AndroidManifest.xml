@@ -4,9 +4,8 @@
     android:versionCode="2"
     android:versionName="2.0" >
 
-    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="16"/>
+    <uses-sdk android:minSdkVersion="11" android:targetSdkVersion="17"/>
 
-    <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.GET_ACCOUNTS" />
     <uses-permission
         android:name="android.permission.USE_CREDENTIALS" />
@@ -16,6 +15,8 @@
         android:name="android.permission.AUTHENTICATE_ACCOUNTS" />
     <uses-permission
         android:name="android.permission.INTERNET" />
+    <uses-permission
+        android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission
         android:name="android.permission.WRITE_SETTINGS" />
 
@@ -51,6 +52,8 @@
         
         <activity
             android:name=".GamesActivity"/>
+        <activity
+            android:name=".GameDetailActivity"/>
         <activity
             android:name=".LeaderboardActivity"/> 
         <activity

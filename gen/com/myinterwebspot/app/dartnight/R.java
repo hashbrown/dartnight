@@ -12,40 +12,82 @@ public final class R {
     }
     public static final class drawable {
         public static final int ic_launcher=0x7f020000;
-        public static final int icon=0x7f020001;
+        public static final int ic_menu_add_team=0x7f020001;
+        public static final int icon=0x7f020002;
     }
     public static final class id {
-        public static final int email_edit=0x7f070009;
-        public static final int email_label=0x7f07000a;
-        public static final int firstname_edit=0x7f070006;
-        public static final int firstname_label=0x7f070005;
-        public static final int hello=0x7f070000;
-        public static final int lastname_edit=0x7f070007;
-        public static final int lastname_label=0x7f070008;
-        public static final int login=0x7f070003;
-        public static final int login_select=0x7f070001;
-        public static final int menu_logout=0x7f070013;
-        public static final int menu_switch_league=0x7f070012;
-        public static final int message=0x7f070004;
-        public static final int message_bottom=0x7f07000f;
-        public static final int ok_button=0x7f070010;
-        public static final int password_edit=0x7f07000d;
-        public static final int password_label=0x7f07000e;
-        public static final int register=0x7f070002;
-        public static final int tv_nav_item=0x7f070011;
-        public static final int username_edit=0x7f07000b;
-        public static final int username_label=0x7f07000c;
+        public static final int display_name=0x7f080002;
+        public static final int email_edit=0x7f080010;
+        public static final int email_label=0x7f080011;
+        public static final int firstname_edit=0x7f08000d;
+        public static final int firstname_label=0x7f08000c;
+        public static final int game_detail=0x7f080001;
+        public static final int game_detail_container=0x7f080000;
+        public static final int game_setup_detail=0x7f080004;
+        public static final int hello=0x7f080007;
+        public static final int lastname_edit=0x7f08000e;
+        public static final int lastname_label=0x7f08000f;
+        public static final int login=0x7f08000a;
+        public static final int login_select=0x7f080008;
+        public static final int menu_add_team=0x7f08001a;
+        public static final int menu_logout=0x7f08001d;
+        public static final int menu_new_game=0x7f08001b;
+        public static final int menu_switch_league=0x7f08001c;
+        public static final int message=0x7f08000b;
+        public static final int message_bottom=0x7f080016;
+        public static final int nav_detail_container=0x7f080006;
+        public static final int nav_list=0x7f080003;
+        public static final int new_game=0x7f080019;
+        public static final int ok_button=0x7f080017;
+        public static final int password_edit=0x7f080014;
+        public static final int password_label=0x7f080015;
+        public static final int progress_bar=0x7f080005;
+        public static final int register=0x7f080009;
+        public static final int tv_nav_item=0x7f080018;
+        public static final int username_edit=0x7f080012;
+        public static final int username_label=0x7f080013;
     }
     public static final class layout {
-        public static final int games=0x7f030000;
-        public static final int home=0x7f030001;
-        public static final int leaders=0x7f030002;
-        public static final int login_activity=0x7f030003;
-        public static final int nav_dropdown_item=0x7f030004;
-        public static final int players=0x7f030005;
+        public static final int game_detail=0x7f030000;
+        public static final int game_detail_fragment=0x7f030001;
+        public static final int game_list_fragment=0x7f030002;
+        public static final int game_list_item=0x7f030003;
+        public static final int game_setup_fragment=0x7f030004;
+        public static final int game_twopane=0x7f030005;
+        public static final int games=0x7f030006;
+        /** 
+    Layout alias to replace the single-pane version of the layout with a
+    two-pane version on Large screens.
+
+    For more on layout aliases, see:
+    http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
+    
+
+    Layout alias to replace the single-pane version of the layout with a
+    two-pane version on Large screens.
+
+    For more on layout aliases, see:
+    http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
+    
+
+    Layout alias to replace the single-pane version of the layout with a
+    two-pane version on Large screens.
+
+    For more on layout aliases, see:
+    http://developer.android.com/training/multiscreen/screensizes.html#TaskUseAliasFilters
+    
+         */
+        public static final int games_activity=0x7f03000c;
+        public static final int home=0x7f030007;
+        public static final int leaders=0x7f030008;
+        public static final int login_activity=0x7f030009;
+        public static final int nav_dropdown_item=0x7f03000a;
+        public static final int players=0x7f03000b;
     }
     public static final class menu {
-        public static final int main_menu=0x7f060000;
+        public static final int game_list_menu=0x7f070000;
+        public static final int game_setup_menu=0x7f070001;
+        public static final int main_menu=0x7f070002;
     }
     public static final class string {
         public static final int app_name=0x7f050001;
@@ -81,15 +123,20 @@ public final class R {
         /**  Label above username EditText 
          */
         public static final int login_username_label=0x7f050007;
-        public static final int menu_logout=0x7f050017;
-        public static final int menu_switch_league=0x7f050016;
+        public static final int menu_add_team=0x7f050013;
+        public static final int menu_logout=0x7f05001b;
         /**  Menus/Action Bar 
- Nav Spinner 
          */
-        public static final int nav_item_games=0x7f050012;
-        public static final int nav_item_leaders=0x7f050014;
-        public static final int nav_item_leagues=0x7f050015;
-        public static final int nav_item_players=0x7f050013;
+        public static final int menu_new_game=0x7f050012;
+        public static final int menu_new_team=0x7f050014;
+        public static final int menu_select_team=0x7f050015;
+        public static final int menu_switch_league=0x7f05001a;
+        /**  Nav Spinner 
+         */
+        public static final int nav_item_games=0x7f050016;
+        public static final int nav_item_leaders=0x7f050018;
+        public static final int nav_item_leagues=0x7f050019;
+        public static final int nav_item_players=0x7f050017;
         public static final int register_user=0x7f050010;
         /**  Button that takes the user to the "sign in" screen 
          */
@@ -100,6 +147,34 @@ public final class R {
         /**  Title string for Login activity
          */
         public static final int ui_activity_title=0x7f050002;
+    }
+    public static final class style {
+        /** 
+        Base application theme, dependent on API level. This theme is replaced
+        by AppBaseTheme from res/values-vXX/styles.xml on newer devices.
+    
+
+            Theme customizations available in newer API levels can go in
+            res/values-vXX/styles.xml, while customizations related to
+            backward-compatibility can go here.
+        
+
+        Base application theme for API 11+. This theme completely replaces
+        AppBaseTheme from res/values/styles.xml on API 11+ devices.
+    
+ API 11 theme customizations can go here. 
+
+        Base application theme for API 14+. This theme completely replaces
+        AppBaseTheme from BOTH res/values/styles.xml and
+        res/values-v11/styles.xml on API 14+ devices.
+    
+ API 14 theme customizations can go here. 
+         */
+        public static final int AppBaseTheme=0x7f060000;
+        /**  Application theme. 
+ All customizations that are NOT specific to a particular API-level can go here. 
+         */
+        public static final int AppTheme=0x7f060001;
     }
     public static final class xml {
         public static final int authenticator=0x7f040000;
