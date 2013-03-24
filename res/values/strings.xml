@@ -56,6 +56,11 @@
     <string name="existing_user">Existing User</string>
     
     <!-- Menus/Action Bar -->
+    <string name="menu_new_game">New game</string>
+    <string name="menu_add_team">Add Team</string>
+    <string name="menu_new_team">Create New Team</string>
+    <string name="menu_select_team">Select Team</string>
+    
     <!-- Nav Spinner -->
     <string name="nav_item_games">Games</string>
     <string name="nav_item_players">Players</string>
