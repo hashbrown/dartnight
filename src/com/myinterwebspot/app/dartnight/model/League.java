@@ -1,6 +1,5 @@
 package com.myinterwebspot.app.dartnight.model;
 
-
 public class League extends ParseModel {
 
 	// PARSE Fields
@@ -24,7 +23,8 @@ public class League extends ParseModel {
 	}
 
 	public User getOwner() {
-		return new User(this.getParseUser(FIELD_OWNER));
+		return ParseModel.fromParseObject(this.getParseUser(FIELD_OWNER),
+				User.class);
 	}
 
 }

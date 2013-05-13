@@ -1,6 +1,5 @@
 package com.myinterwebspot.app.dartnight.model;
 
-import com.parse.ParseObject;
 
 public class Game extends ParseModel {
 
@@ -10,10 +9,6 @@ public class Game extends ParseModel {
 	private static String FIELD_LEAGUE_ID = "league_id";
 	private static String FIELD_START_TIMESTAMP = "start_time";
 	private static String FIELD_END_TIMESTAMP = "end_time";
-
-	public Game(ParseObject parseData) {
-		super(parseData);
-	}
 
 	public Game(String leagueId) {
 		super(Game.class.getSimpleName());

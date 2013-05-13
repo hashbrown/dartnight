@@ -3,6 +3,7 @@ package com.myinterwebspot.app.dartnight.fragment;
 import java.util.ArrayList;
 import java.util.List;
 
+import android.app.Activity;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ListFragment;
@@ -15,6 +16,7 @@ import android.widget.ListView;
 import com.myinterwebspot.app.dartnight.GamesAdapter;
 import com.myinterwebspot.app.dartnight.R;
 import com.myinterwebspot.app.dartnight.model.Game;
+import com.myinterwebspot.app.dartnight.model.ParseModel;
 import com.parse.ParseException;
 import com.parse.ParseObject;
 import com.parse.ParseQuery;
@@ -22,6 +24,23 @@ import com.parse.ParseQuery;
 public class GamesListFragment extends ListFragment {
 
 	protected static final String TAG = "GamesListFragment";
+
+	public interface Callbacks {
+		/**
+		 * Return true to select (activate) the session in the list, false
+		 * otherwise.
+		 */
+		public boolean onGameSelected(String gameId);
+	}
+
+	private static Callbacks sDummyCallbacks = new Callbacks() {
+		@Override
+		public boolean onGameSelected(String gameId) {
+			return true;
+		}
+	};
+
+	private Callbacks mCallbacks = sDummyCallbacks;
 
 	@Override
 	public void onCreate(Bundle savedInstanceState) {
@@ -48,9 +67,26 @@ public class GamesListFragment extends ListFragment {
 	}
 
 	@Override
+	public void onAttach(Activity activity) {
+		super.onAttach(activity);
+		if (!(activity instanceof Callbacks)) {
+			throw new ClassCastException(
+					"Activity must implement fragment's callbacks.");
+		}
+
+		this.mCallbacks = (Callbacks) activity;
+	}
+
+	@Override
+	public void onDetach() {
+		super.onDetach();
+		this.mCallbacks = sDummyCallbacks;
+	}
+
+	@Override
 	public void onListItemClick(ListView l, View v, int position, long id) {
-		// TODO Auto-generated method stub
-		super.onListItemClick(l, v, position, id);
+		Game game = (Game) this.getListAdapter().getItem(position);
+		this.mCallbacks.onGameSelected(game.getId());
 	}
 
 	private void loadGames() {
@@ -75,7 +111,7 @@ public class GamesListFragment extends ListFragment {
 				try {
 					List<ParseObject> results = query.find();
 					for (ParseObject po : results) {
-						games.add(new Game(po));
+						games.add(ParseModel.fromParseObject(po, Game.class));
 					}
 				} catch (ParseException e) {
 					Log.e(TAG, "Exception retrieving games:", e);
@@ -85,5 +121,4 @@ public class GamesListFragment extends ListFragment {
 			}
 		}.execute();
 	}
-
 }

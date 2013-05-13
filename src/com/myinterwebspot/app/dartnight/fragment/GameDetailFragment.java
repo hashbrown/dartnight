@@ -16,6 +16,7 @@ import android.widget.TextView;
 
 import com.myinterwebspot.app.dartnight.R;
 import com.myinterwebspot.app.dartnight.model.Game;
+import com.myinterwebspot.app.dartnight.model.ParseModel;
 import com.parse.GetCallback;
 import com.parse.ParseException;
 import com.parse.ParseObject;
@@ -154,7 +155,8 @@ public class GameDetailFragment extends Fragment {
 			@Override
 			public void done(ParseObject object, ParseException e) {
 				if (e == null) {
-					GameDetailFragment.this.game = new Game(object);
+					GameDetailFragment.this.game = ParseModel.fromParseObject(
+							object, Game.class);
 					Log.d(TAG,
 							"Retrieved game:"
 									+ GameDetailFragment.this.game.getName());

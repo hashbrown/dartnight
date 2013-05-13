@@ -7,7 +7,7 @@ public class ParseModel {
 
 	private final ParseObject parse;
 
-	public ParseModel(ParseObject parseObject) {
+	ParseModel(ParseObject parseObject) {
 		this.parse = parseObject;
 	}
 
@@ -37,6 +37,15 @@ public class ParseModel {
 
 	protected ParseUser getParseUser(String fieldName) {
 		return this.parse.getParseUser(fieldName);
+	}
+
+	protected ParseObject getParseObject(String fieldName) {
+		return this.parse.getParseObject(fieldName);
+	}
+
+	public static <T extends ParseModel> T fromParseObject(ParseObject obj,
+			Class<T> clazz) {
+		return clazz.cast(new ParseModel(obj));
 	}
 
 }

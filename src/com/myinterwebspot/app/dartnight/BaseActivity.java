@@ -19,6 +19,7 @@ import android.view.MenuInflater;
 
 import com.myinterwebspot.app.dartnight.auth.Authenticator;
 import com.myinterwebspot.app.dartnight.model.League;
+import com.myinterwebspot.app.dartnight.model.ParseModel;
 import com.myinterwebspot.app.dartnight.model.User;
 import com.parse.ParseUser;
 
@@ -96,7 +97,8 @@ public abstract class BaseActivity extends FragmentActivity implements
 		@Override
 		protected void onPostExecute(ParseUser authUser) {
 			if (authUser != null) {
-				onAuthenticated(new User(authUser));
+				onAuthenticated(ParseModel
+						.fromParseObject(authUser, User.class));
 			}
 		}
 

@@ -10,10 +10,11 @@ import android.util.Log;
 import android.view.MenuItem;
 
 import com.myinterwebspot.app.dartnight.fragment.GameDetailFragment;
+import com.myinterwebspot.app.dartnight.fragment.GamesListFragment.Callbacks;
 import com.myinterwebspot.app.dartnight.model.Game;
 import com.myinterwebspot.app.dartnight.model.User;
 
-public class GamesActivity extends BaseActivity {
+public class GamesActivity extends BaseActivity implements Callbacks {
 
 	boolean mTwoPane = false;
 
@@ -76,5 +77,11 @@ public class GamesActivity extends BaseActivity {
 	@Override
 	protected void onAuthenticated(User user) {
 		Log.d("GamesActivity", "AUTHENTICATED");
+	}
+
+	@Override
+	public boolean onGameSelected(String gameId) {
+		displayGameDetail(gameId);
+		return true;
 	}
 }

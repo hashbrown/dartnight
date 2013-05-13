@@ -7,10 +7,6 @@ public class User extends ParseModel {
 	private static String FNAME_FIELD = "first_name";
 	private static String LNAME_FIELD = "last_name";
 
-	public User(ParseUser user) {
-		super(user);
-	}
-
 	public User() {
 		super(new ParseUser());
 	}
